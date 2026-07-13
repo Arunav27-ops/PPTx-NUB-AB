@@ -1,0 +1,2740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSE 2111 – Data Structures | Study Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        /* ────────────── RESET & BASE ────────────── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #f6f9fc;
+            --surface: #ffffff;
+            --surface2: #f0f4f9;
+            --text: #0b1a2e;
+            --text2: #2c3e50;
+            --text3: #5a6f84;
+            --primary: #1a5f7a;
+            --primary-light: #2a7f9e;
+            --primary-dark: #0e3e52;
+            --accent: #f39c12;
+            --border: #dce4ec;
+            --shadow: 0 8px 30px rgba(0, 20, 40, 0.08);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --transition: 0.25s ease;
+            --font: 'Inter', sans-serif;
+        }
+
+        .dark {
+            --bg: #0d1a26;
+            --surface: #1a2d3d;
+            --surface2: #243b4e;
+            --text: #ecf3f9;
+            --text2: #c8dbe8;
+            --text3: #8aa3b9;
+            --border: #2f4a5e;
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            transition: background var(--transition), color var(--transition);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        /* ────────────── SCROLLBAR ────────────── */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--surface2);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-light);
+            border-radius: 8px;
+        }
+
+        /* ────────────── TOP HEADER ────────────── */
+        .app-header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.85);
+            transition: background var(--transition), border var(--transition);
+        }
+        .dark .app-header {
+            background: rgba(26, 45, 61, 0.92);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--primary);
+        }
+        .logo i {
+            font-size: 1.6rem;
+            color: var(--accent);
+        }
+        .logo span {
+            color: var(--text);
+            font-weight: 400;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .theme-toggle {
+            background: var(--surface2);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            color: var(--text2);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .theme-toggle:hover {
+            background: var(--border);
+            color: var(--text);
+        }
+
+        /* ────────────── SIDEBAR ────────────── */
+        .app-layout {
+            display: flex;
+            flex: 1;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem 0;
+            height: calc(100vh - 70px);
+            position: sticky;
+            top: 70px;
+            overflow-y: auto;
+            flex-shrink: 0;
+            transition: background var(--transition), border var(--transition);
+        }
+
+        .sidebar nav {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .sidebar nav a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 0.7rem 1.8rem;
+            font-weight: 500;
+            font-size: 0.95rem;
+            color: var(--text2);
+            border-left: 3px solid transparent;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        .sidebar nav a i {
+            width: 22px;
+            font-size: 1.1rem;
+            color: var(--text3);
+        }
+        .sidebar nav a:hover {
+            background: var(--surface2);
+            color: var(--text);
+            border-left-color: var(--primary-light);
+        }
+        .sidebar nav a.active {
+            background: var(--surface2);
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 600;
+        }
+        .sidebar nav a.active i {
+            color: var(--primary);
+        }
+
+        .sidebar .nav-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text3);
+            padding: 1.2rem 1.8rem 0.4rem;
+            font-weight: 600;
+        }
+
+        /* ────────────── MAIN CONTENT ────────────── */
+        .main-content {
+            flex: 1;
+            padding: 2rem 2.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            transition: padding 0.2s;
+        }
+
+        .page {
+            display: none;
+            animation: fadeUp 0.35s ease;
+        }
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeUp {
+            0% {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .page-title i {
+            color: var(--primary);
+        }
+        .page-sub {
+            color: var(--text3);
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        /* ────────────── CARDS / GRID ────────────── */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 1.5rem 1.8rem;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 36px rgba(0, 20, 40, 0.12);
+        }
+        .dark .card:hover {
+            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5);
+        }
+
+        .card h3 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .card h3 i {
+            color: var(--primary);
+        }
+        .card p {
+            color: var(--text3);
+            font-size: 0.92rem;
+        }
+
+        .stat-number {
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1.2;
+        }
+
+        /* ────────────── MCQ SECTION ────────────── */
+        .mcq-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 1.8rem;
+            align-items: center;
+        }
+        .mcq-filters select,
+        .mcq-filters input {
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            font-family: var(--font);
+            font-size: 0.9rem;
+            transition: var(--transition);
+            outline: none;
+        }
+        .mcq-filters select:focus,
+        .mcq-filters input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(26, 95, 122, 0.15);
+        }
+
+        .mcq-progress {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+            padding: 0.8rem 1.2rem;
+            background: var(--surface2);
+            border-radius: var(--radius-sm);
+            font-size: 0.92rem;
+        }
+        .mcq-progress .bar-wrap {
+            flex: 1;
+            min-width: 120px;
+            height: 6px;
+            background: var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .mcq-progress .bar-fill {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 8px;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .mcq-progress .badge {
+            background: var(--primary);
+            color: #fff;
+            padding: 0.15rem 0.7rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .mcq-question {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 1.8rem 2rem;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+        }
+        .mcq-question .q-text {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 1.2rem;
+        }
+        .mcq-question .q-meta {
+            font-size: 0.8rem;
+            color: var(--text3);
+            margin-bottom: 0.8rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .mcq-question .q-meta span {
+            background: var(--surface2);
+            padding: 0.1rem 0.7rem;
+            border-radius: 20px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .options label {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 0.6rem 1rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.95rem;
+        }
+        .options label:hover {
+            background: var(--surface2);
+        }
+        .options input[type="radio"] {
+            accent-color: var(--primary);
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+        .options label.correct {
+            border-color: #27ae60;
+            background: #eafaf1;
+        }
+        .dark .options label.correct {
+            background: #1a3a2a;
+        }
+        .options label.wrong {
+            border-color: #e74c3c;
+            background: #fdedec;
+        }
+        .dark .options label.wrong {
+            background: #3a1a1a;
+        }
+        .options label.disabled {
+            cursor: default;
+            opacity: 0.9;
+        }
+
+        .mcq-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .mcq-nav .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.5rem 1.4rem;
+            border-radius: var(--radius-sm);
+            border: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            font-family: var(--font);
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--surface2);
+            color: var(--text2);
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: var(--primary-light);
+        }
+        .btn-accent {
+            background: var(--accent);
+            color: #fff;
+        }
+        .btn-accent:hover {
+            background: #e08e0b;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid var(--border);
+        }
+        .btn-outline:hover {
+            background: var(--surface2);
+        }
+        .btn-danger {
+            background: #e74c3c;
+            color: #fff;
+        }
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+        .btn-success {
+            background: #27ae60;
+            color: #fff;
+        }
+        .btn-success:hover {
+            background: #1e8449;
+        }
+
+        .mcq-result {
+            margin-top: 1.5rem;
+            padding: 1.2rem 1.8rem;
+            border-radius: var(--radius);
+            background: var(--surface2);
+            border-left: 5px solid var(--primary);
+            font-weight: 500;
+        }
+
+        /* ────────────── SHORT NOTES ────────────── */
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .note-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            cursor: default;
+        }
+        .note-card:hover {
+            transform: translateY(-3px);
+        }
+        .note-card h4 {
+            font-size: 1rem;
+            margin-bottom: 0.4rem;
+            color: var(--primary);
+        }
+        .note-card .note-tag {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--text3);
+            background: var(--surface2);
+            padding: 0.1rem 0.7rem;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 0.6rem;
+        }
+        .note-card p {
+            font-size: 0.92rem;
+            color: var(--text2);
+            line-height: 1.7;
+        }
+        .note-card ul {
+            padding-left: 1.2rem;
+            font-size: 0.9rem;
+            color: var(--text2);
+        }
+
+        /* ────────────── CODE SECTION ────────────── */
+        .code-block {
+            background: var(--surface);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+        .code-block .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.6rem 1.2rem;
+            background: var(--surface2);
+            border-bottom: 1px solid var(--border);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .code-block .code-header .lang {
+            color: var(--text3);
+            font-weight: 400;
+            font-size: 0.8rem;
+        }
+        .code-block .code-header .copy-btn {
+            background: transparent;
+            border: none;
+            color: var(--text3);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+        }
+        .code-block .code-header .copy-btn:hover {
+            background: var(--border);
+            color: var(--text);
+        }
+        .code-block pre {
+            padding: 1.2rem 1.5rem;
+            margin: 0;
+            overflow-x: auto;
+            font-size: 0.85rem;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            background: var(--surface);
+            color: var(--text);
+            line-height: 1.7;
+        }
+        .code-block pre code {
+            font-family: inherit;
+        }
+        .dark .code-block pre {
+            background: #0d1a26;
+            color: #d4e4f0;
+        }
+
+        .code-tabs {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+        .code-tabs button {
+            padding: 0.4rem 1.2rem;
+            border-radius: 30px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text2);
+            font-family: var(--font);
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .code-tabs button.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+        .code-tabs button:hover:not(.active) {
+            background: var(--surface2);
+        }
+        .code-panel {
+            display: none;
+        }
+        .code-panel.active {
+            display: block;
+        }
+
+        .code-description {
+            background: var(--surface2);
+            padding: 0.8rem 1.2rem;
+            border-radius: var(--radius-sm);
+            margin-bottom: 1rem;
+            font-size: 0.92rem;
+            color: var(--text2);
+            border-left: 3px solid var(--primary);
+        }
+
+        /* ────────────── MATH OPS SECTION ────────────── */
+        .math-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--surface);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            margin: 1rem 0;
+        }
+        .math-table th,
+        .math-table td {
+            padding: 0.7rem 1rem;
+            border: 1px solid var(--border);
+            text-align: left;
+        }
+        .math-table th {
+            background: var(--surface2);
+            font-weight: 600;
+            color: var(--text);
+        }
+        .math-table td {
+            color: var(--text2);
+        }
+        .math-table .highlight {
+            background: var(--surface2);
+        }
+
+        .math-example {
+            background: var(--surface2);
+            padding: 0.8rem 1.2rem;
+            border-radius: var(--radius-sm);
+            margin: 0.5rem 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--text);
+            border-left: 4px solid var(--accent);
+        }
+
+        /* ────────────── EXAM PREP ────────────── */
+        .exam-timer {
+            font-size: 2.8rem;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            color: var(--primary);
+            background: var(--surface);
+            padding: 1rem 2rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            display: inline-block;
+            margin: 0.5rem 0 1.2rem;
+            box-shadow: var(--shadow);
+        }
+        .exam-timer .label {
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: var(--text3);
+            display: block;
+        }
+
+        .exam-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 1rem 0 1.8rem;
+        }
+
+        /* ────────────── RESPONSIVE ────────────── */
+        @media (max-width: 820px) {
+            .sidebar {
+                width: 0;
+                overflow: hidden;
+                padding: 0;
+                border: none;
+                position: fixed;
+                top: 70px;
+                left: 0;
+                height: calc(100vh - 70px);
+                z-index: 99;
+                background: var(--surface);
+                transition: width 0.25s ease, padding 0.25s ease;
+            }
+            .sidebar.open {
+                width: 260px;
+                padding: 1.5rem 0;
+                border-right: 1px solid var(--border);
+            }
+            .main-content {
+                padding: 1.2rem 1.2rem;
+            }
+            .app-header {
+                padding: 0 1rem;
+            }
+            .menu-toggle {
+                display: flex !important;
+            }
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            .notes-grid {
+                grid-template-columns: 1fr;
+            }
+            .mcq-question {
+                padding: 1.2rem;
+            }
+            .exam-timer {
+                font-size: 2rem;
+                padding: 0.8rem 1.2rem;
+            }
+            .math-table {
+                font-size: 0.85rem;
+            }
+            .math-table th,
+            .math-table td {
+                padding: 0.4rem 0.6rem;
+            }
+        }
+        @media (min-width: 821px) {
+            .menu-toggle {
+                display: none !important;
+            }
+        }
+
+        .menu-toggle {
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text);
+            cursor: pointer;
+            padding: 0.2rem 0.5rem;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 98;
+            top: 70px;
+        }
+        .overlay.open {
+            display: block;
+        }
+
+        .footer-note {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 1.5rem 0 0.5rem;
+            border-top: 1px solid var(--border);
+            color: var(--text3);
+            font-size: 0.85rem;
+        }
+
+        /* ────────────── MISC ────────────── */
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .mt-1 {
+            margin-top: 1rem;
+        }
+        .mb-1 {
+            margin-bottom: 1rem;
+        }
+        .gap-1 {
+            gap: 1rem;
+        }
+
+        .highlight {
+            color: var(--accent);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ─── HEADER ─── -->
+    <header class="app-header">
+        <div style="display:flex;align-items:center;gap:12px;">
+            <button class="menu-toggle" id="menuToggle" aria-label="Toggle sidebar">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="logo">
+                <i class="fas fa-code-branch"></i>
+                CSE 2111 <span>· Data Structures</span>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- ─── OVERLAY ─── -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- ─── LAYOUT ─── -->
+    <div class="app-layout">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <nav>
+                <div class="nav-label">Main</div>
+                <a class="active" data-page="home"><i class="fas fa-home"></i> Dashboard</a>
+                <a data-page="mcq"><i class="fas fa-question-circle"></i> MCQ Practice</a>
+                <a data-page="notes"><i class="fas fa-sticky-note"></i> Short Notes</a>
+                <a data-page="code"><i class="fas fa-code"></i> C Code</a>
+                <a data-page="math"><i class="fas fa-calculator"></i> Math Ops</a>
+                <a data-page="exam"><i class="fas fa-clock"></i> Exam Prep</a>
+            </nav>
+        </aside>
+
+        <!-- MAIN -->
+        <main class="main-content">
+
+            <!-- ======== HOME ======== -->
+            <section class="page active" id="page-home">
+                <h1 class="page-title"><i class="fas fa-graduation-cap"></i> Dashboard</h1>
+                <p class="page-sub">Welcome to your CSE 2111 Data Structures study hub. Track your progress and jump right in.</p>
+
+                <div class="grid-2">
+                    <div class="card">
+                        <h3><i class="fas fa-list"></i> Total MCQs</h3>
+                        <div class="stat-number" id="totalMcqCount">300</div>
+                        <p>Covering all modules from the course.</p>
+                    </div>
+                    <div class="card">
+                        <h3><i class="fas fa-check-circle"></i> Attempted</h3>
+                        <div class="stat-number" id="attemptedCount">0</div>
+                        <p>Keep practicing to master the material.</p>
+                    </div>
+                    <div class="card">
+                        <h3><i class="fas fa-file-code"></i> Code Examples</h3>
+                        <div class="stat-number">3</div>
+                        <p>Array, Stack, Queue – ready to run.</p>
+                    </div>
+                    <div class="card">
+                        <h3><i class="fas fa-book-open"></i> Short Notes</h3>
+                        <div class="stat-number">16</div>
+                        <p>Key concepts organised by topic.</p>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top:1rem;">
+                    <h3><i class="fas fa-bullseye"></i> Quick Start</h3>
+                    <p style="margin-bottom:1rem;">Choose a section to begin your study session.</p>
+                    <div style="display:flex;flex-wrap:wrap;gap:10px;">
+                        <button class="btn btn-primary" onclick="navigateTo('mcq')"><i class="fas fa-play"></i> Practice MCQs</button>
+                        <button class="btn btn-accent" onclick="navigateTo('notes')"><i class="fas fa-book"></i> Read Notes</button>
+                        <button class="btn btn-outline" onclick="navigateTo('code')"><i class="fas fa-terminal"></i> View Code</button>
+                        <button class="btn btn-outline" onclick="navigateTo('math')"><i class="fas fa-calculator"></i> Math Ops</button>
+                        <button class="btn btn-outline" onclick="navigateTo('exam')"><i class="fas fa-hourglass-half"></i> Exam Mode</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ======== MCQ ======== -->
+            <section class="page" id="page-mcq">
+                <div class="flex-between">
+                    <div>
+                        <h1 class="page-title"><i class="fas fa-question-circle"></i> MCQ Practice</h1>
+                        <p class="page-sub">300 questions based on your CSE 2111 materials.</p>
+                    </div>
+                    <button class="btn btn-danger" id="resetMcqBtn"><i class="fas fa-undo"></i> Reset Progress</button>
+                </div>
+
+                <div class="mcq-filters">
+                    <select id="mcqTopicFilter">
+                        <option value="all">All Topics</option>
+                        <option value="ds-basics">DS Basics</option>
+                        <option value="data-rep">Data Representation</option>
+                        <option value="ascii">ASCII</option>
+                        <option value="adt">ADT</option>
+                        <option value="array">Array</option>
+                        <option value="stack">Stack</option>
+                        <option value="queue">Queue</option>
+                        <option value="expression">Expressions</option>
+                        <option value="shunting">Shunting Yard</option>
+                        <option value="postfix">Postfix Evaluation</option>
+                    </select>
+                    <select id="mcqStatusFilter">
+                        <option value="all">All Questions</option>
+                        <option value="unanswered">Unanswered</option>
+                        <option value="answered">Answered</option>
+                        <option value="correct">Correct</option>
+                        <option value="wrong">Wrong</option>
+                    </select>
+                    <input type="text" id="mcqSearch" placeholder="Search questions…" />
+                </div>
+
+                <div class="mcq-progress">
+                    <span><i class="fas fa-chart-simple"></i> Progress</span>
+                    <div class="bar-wrap"><div class="bar-fill" id="mcqProgressBar"></div></div>
+                    <span id="mcqProgressText">0 / 300</span>
+                    <span class="badge" id="mcqScoreBadge">0%</span>
+                </div>
+
+                <div id="mcqContainer">
+                    <!-- rendered by JS -->
+                </div>
+
+                <div class="mcq-nav">
+                    <div class="btn-group">
+                        <button class="btn btn-outline" id="prevMcqBtn"><i class="fas fa-chevron-left"></i> Previous</button>
+                        <button class="btn btn-outline" id="nextMcqBtn">Next <i class="fas fa-chevron-right"></i></button>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-accent" id="shuffleMcqBtn"><i class="fas fa-random"></i> Shuffle</button>
+                        <button class="btn btn-success" id="resetCurrentMcqBtn"><i class="fas fa-rotate-left"></i> Reset Current</button>
+                    </div>
+                </div>
+
+                <div id="mcqResult" class="mcq-result" style="display:none;"></div>
+            </section>
+
+            <!-- ======== SHORT NOTES ======== -->
+            <section class="page" id="page-notes">
+                <h1 class="page-title"><i class="fas fa-sticky-note"></i> Short Notes</h1>
+                <p class="page-sub">Key concepts from each module, distilled for quick revision.</p>
+
+                <div class="notes-grid" id="notesContainer">
+                    <!-- rendered by JS -->
+                </div>
+            </section>
+
+            <!-- ======== CODE ======== -->
+            <section class="page" id="page-code">
+                <h1 class="page-title"><i class="fas fa-code"></i> C Programming Code</h1>
+                <p class="page-sub">Array, Stack, and Queue implementations from your course – each with a clear description.</p>
+
+                <div class="code-tabs" id="codeTabs">
+                    <button class="active" data-code="array">Array</button>
+                    <button data-code="stack">Stack</button>
+                    <button data-code="queue">Queue</button>
+                </div>
+
+                <div id="codePanels">
+                    <!-- rendered by JS -->
+                </div>
+            </section>
+
+            <!-- ======== MATH OPS ======== -->
+            <section class="page" id="page-math">
+                <h1 class="page-title"><i class="fas fa-calculator"></i> Math Operations & Expressions</h1>
+                <p class="page-sub">Operator precedence, associativity, and conversion examples from your course.</p>
+
+                <div class="card" style="margin-bottom:1.5rem;">
+                    <h3><i class="fas fa-sort-amount-up"></i> Operator Precedence (Highest to Lowest)</h3>
+                    <table class="math-table">
+                        <thead><tr><th>Precedence</th><th>Operators</th><th>Description</th></tr></thead>
+                        <tbody>
+                            <tr><td>1 (Highest)</td><td>( )</td><td>Parentheses / Brackets</td></tr>
+                            <tr><td>2</td><td>^</td><td>Exponent (Power)</td></tr>
+                            <tr><td>3</td><td>*, /</td><td>Multiplication, Division</td></tr>
+                            <tr><td>4 (Lowest)</td><td>+, -</td><td>Addition, Subtraction</td></tr>
+                        </tbody>
+                    </table>
+                    <p style="margin-top:0.5rem;font-size:0.92rem;color:var(--text3);">BODMAS / PEDMAS: <strong>B</strong>rackets, <strong>O</strong>rder (Exponent), <strong>D</strong>ivision, <strong>M</strong>ultiplication, <strong>A</strong>ddition, <strong>S</strong>ubtraction.</p>
+                </div>
+
+                <div class="card" style="margin-bottom:1.5rem;">
+                    <h3><i class="fas fa-arrows-left-right"></i> Operator Associativity</h3>
+                    <table class="math-table">
+                        <thead><tr><th>Operators</th><th>Associativity</th><th>Example</th></tr></thead>
+                        <tbody>
+                            <tr><td>+, -</td><td>Left-associative</td><td>6 - 3 + 2 → (6-3)+2 = 5</td></tr>
+                            <tr><td>*, /</td><td>Left-associative</td><td>8 / 4 * 2 → (8/4)*2 = 4</td></tr>
+                            <tr><td>^</td><td>Right-associative</td><td>2 ^ 3 ^ 2 → 2 ^ (3^2) = 512</td></tr>
+                            <tr><td>( )</td><td>Inner to outer</td><td>((3*5)+(6-2)) → (15+4)=19</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card" style="margin-bottom:1.5rem;">
+                    <h3><i class="fas fa-exchange-alt"></i> Expression Notations</h3>
+                    <table class="math-table">
+                        <thead><tr><th>Notation</th><th>Form</th><th>Example</th></tr></thead>
+                        <tbody>
+                            <tr><td><strong>Infix</strong></td><td>operand operator operand</td><td>(5 + 8) * 2</td></tr>
+                            <tr><td><strong>Prefix</strong></td><td>operator operand operand</td><td>* + 5 8 2</td></tr>
+                            <tr><td><strong>Postfix</strong></td><td>operand operand operator</td><td>5 8 + 2 *</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card" style="margin-bottom:1.5rem;">
+                    <h3><i class="fas fa-arrows-spin"></i> Conversion Examples</h3>
+                    <div class="math-example"><strong>Infix → Prefix:</strong> (2 + 8) * 5  →  * + 2 8 5</div>
+                    <div class="math-example"><strong>Infix → Postfix:</strong> (2 + 8) * 5  →  2 8 + 5 *</div>
+                    <div class="math-example"><strong>Postfix Evaluation:</strong> 5 3 16 * 2 3 ^ / +  →  5 + (3*16)/(2^3) = 11</div>
+                    <div class="math-example"><strong>Shunting Yard:</strong> Used to convert infix to postfix using a stack and a queue.</div>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-bolt"></i> Quick Reference</h3>
+                    <ul style="padding-left:1.2rem;color:var(--text2);">
+                        <li><strong>Left-associative:</strong> evaluate left to right (+, -, *, /)</li>
+                        <li><strong>Right-associative:</strong> evaluate right to left (^)</li>
+                        <li><strong>BODMAS</strong> – Bracket, Of, Division, Multiplication, Addition, Subtraction</li>
+                        <li><strong>PEDMAS</strong> – Parenthesis, Exponent, Division, Multiplication, Addition, Subtraction</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- ======== EXAM PREP ======== -->
+            <section class="page" id="page-exam">
+                <h1 class="page-title"><i class="fas fa-clock"></i> Exam Preparation</h1>
+                <p class="page-sub">Simulate an exam environment with timed MCQ sessions.</p>
+
+                <div style="display:flex;flex-wrap:wrap;gap:1.5rem;align-items:center;margin:1rem 0 1.5rem;">
+                    <div class="exam-timer" id="examTimerDisplay">
+                        <span class="label">⏱ Time Remaining</span>
+                        <span id="examTimer">25:00</span>
+                    </div>
+                    <div>
+                        <div style="font-weight:600;font-size:1.1rem;">Questions: <span id="examQuestionCount">10</span></div>
+                        <div style="color:var(--text3);font-size:0.9rem;">Answered: <span id="examAnsweredCount">0</span> / <span id="examTotalCount">10</span></div>
+                    </div>
+                </div>
+
+                <div class="exam-controls">
+                    <button class="btn btn-primary" id="startExamBtn"><i class="fas fa-play"></i> Start Exam</button>
+                    <button class="btn btn-danger" id="endExamBtn"><i class="fas fa-stop"></i> End Exam</button>
+                    <button class="btn btn-outline" id="examResetBtn"><i class="fas fa-undo"></i> Reset</button>
+                    <select id="examQuestionSelect" style="padding:0.5rem 1rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);color:var(--text);font-family:var(--font);">
+                        <option value="5">5 Questions</option>
+                        <option value="10" selected>10 Questions</option>
+                        <option value="15">15 Questions</option>
+                        <option value="20">20 Questions</option>
+                        <option value="30">30 Questions</option>
+                    </select>
+                </div>
+
+                <div id="examContainer">
+                    <div style="text-align:center;padding:3rem 0;color:var(--text3);">
+                        <i class="fas fa-hourglass-start" style="font-size:2.5rem;display:block;margin-bottom:0.8rem;"></i>
+                        Press <strong>Start Exam</strong> to begin your timed practice session.
+                    </div>
+                </div>
+
+                <div id="examResult" style="display:none;margin-top:1.5rem;padding:1.5rem;background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);">
+                    <!-- rendered by JS -->
+                </div>
+            </section>
+
+            <div class="footer-note">
+                CSE 2111 Data Structures · Built from your course materials · <i class="fas fa-graduation-cap"></i>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // 1. DATA – 300 MCQs generated from materials
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        const MCQ_DATA = [];
+
+        // Helper to push many questions
+        function addMCQ(topic, question, options, correct, explanation) {
+            MCQ_DATA.push({ id: MCQ_DATA.length + 1, topic, question, options, correct, explanation, answered: false,
+                selected: null });
+        }
+
+        // ── DS Basics (30) ──
+        const dsTopics = [
+            ['ds-basics', 'What is a data structure?', ['A programming language', 'A way to organise and store data',
+                'A type of algorithm', 'A database system'
+            ], 1, 'A data structure is a specialised format for organising, processing, retrieving and storing data.'],
+            ['ds-basics', 'Which of the following is a primitive data structure?', ['Array', 'Stack', 'Integer',
+                'Linked List'
+            ], 2, 'Integer is a primitive (basic) data type supported by programming languages.'],
+            ['ds-basics', 'Which of the following is a non-primitive data structure?', ['Character', 'Boolean',
+                'Linked List', 'Real'
+            ], 2, 'Linked List is a non-primitive data structure created using primitive data types.'],
+            ['ds-basics', 'Data structures are generally categorised into how many classes?', ['One', 'Two', 'Three',
+                'Four'
+            ], 1, 'Two classes: primitive and non-primitive.'],
+            ['ds-basics', 'Which of the following is NOT a primitive data type?', ['Integer', 'Real', 'Character',
+                'Stack'
+            ], 3, 'Stack is a non-primitive data structure.'],
+            ['ds-basics', 'Non-primitive data structures can be further classified into:', ['Linear and Non-linear',
+                'Static and Dynamic', 'Simple and Complex', 'Mutable and Immutable'
+            ], 0, 'Non-primitive structures are classified as linear or non-linear.'],
+            ['ds-basics', 'Which of the following is a linear data structure?', ['Tree', 'Graph', 'Array', 'Hash Table'
+            ], 2, 'Array is a linear data structure where elements are stored sequentially.'],
+            ['ds-basics', 'Which of the following is a non-linear data structure?', ['Stack', 'Queue', 'Linked List',
+                'Tree'
+            ], 3, 'Tree is a non-linear data structure.'],
+            ['ds-basics', 'In a linear data structure, elements are stored:', ['In a hierarchical order',
+                'In a sequential order', 'In a random order', 'In a circular order'
+            ], 1, 'Elements are stored in a linear or sequential order in memory.'],
+            ['ds-basics', 'Which data structure follows LIFO principle?', ['Queue', 'Stack', 'Array', 'Tree'], 1,
+                'Stack follows Last In First Out.'],
+            ['ds-basics', 'Which data structure follows FIFO principle?', ['Stack', 'Queue', 'Linked List', 'Tree'], 1,
+                'Queue follows First In First Out.'],
+            ['ds-basics', 'What is the basic unit of data representation?', ['Byte', 'Bit', 'Character', 'String'], 1,
+                'The basic unit is a bit, which can be 0 or 1.'],
+            ['ds-basics', 'How many bits form one byte?', ['4', '8', '16', '32'], 1, 'Eight bits together form one byte.'],
+            ['ds-basics', 'A byte is the minimum addressable memory in a computer system.', ['True', 'False'], 0,
+                'True – a byte is the smallest addressable unit.'],
+            ['ds-basics', 'Which of the following is used to represent a character in a computer?', ['Bit', 'Byte',
+                'Word', 'Nibble'
+            ], 1, 'A byte is used to represent a character.'],
+            ['ds-basics', 'A string is a data structure that emerges through several layers of data structures.',
+                ['True', 'False'], 0, 'True – a string is built from characters, which are bytes, which are bits.'],
+            ['ds-basics', 'How many bytes are used to represent an integer in C?', ['2', '4', '8', 'Depends on system'],
+                3, 'In C, the size of int depends on the system (typically 4 bytes on 32-bit, 4 or 8 on 64-bit).'],
+            ['ds-basics', 'An unsigned integer uses how many bits for the magnitude?', ['31', '32', '30', '16'], 1,
+                'Unsigned integer uses all 32 bits for magnitude.'],
+            ['ds-basics', 'A signed integer uses how many bits for the magnitude?', ['32', '31', '30', '29'], 1,
+                'Signed integer uses 31 bits for magnitude and 1 bit for sign.'],
+            ['ds-basics', 'The maximum value of an unsigned 32-bit integer is:', ['2^31 - 1', '2^32 - 1', '2^31',
+                    '2^32'
+            ], 1, 'Maximum is 2^32 - 1 (4,294,967,295).'],
+            ['ds-basics', 'The minimum value of a signed 32-bit integer is:', ['-2^31', '-2^31 + 1', '-2^32', '-2^32 + 1'
+            ], 0, 'Minimum is -2^31 (i.e. -2,147,483,648).'],
+            ['ds-basics', 'In two\'s complement, the left-most bit has a:', ['Positive weight', 'Negative weight',
+                'Zero weight', 'No weight'
+            ], 1, 'In two\'s complement, the left-most bit has a negative weight.'],
+            ['ds-basics', 'IEEE 754 is a standard for:', ['Integer representation', 'Floating point representation',
+                'Character representation', 'String representation'
+            ], 1, 'IEEE 754 is the standard for floating point number representation.'],
+            ['ds-basics', 'In IEEE 754, the mantissa holds:', ['The sign of the number', 'The exponent',
+                'The significant digits', 'The binary point'
+            ], 2, 'The mantissa holds the significant digits of the number.'],
+            ['ds-basics', 'In IEEE 754, the exponent tells the computer:', ['Where the binary point should be',
+                'The sign of the number', 'The significant digits', 'The base of the number'
+            ], 0, 'The exponent scales the number by powers of 2.'],
+            ['ds-basics', 'Floating point numbers can represent a very wide range of numbers but with limited precision.',
+                ['True', 'False'], 0, 'True – this is why rounding errors sometimes appear.'],
+            ['ds-basics', 'ASCII stands for:', ['American Standard Code for Information Interchange',
+                'American System for Computer Information', 'Advanced Standard Code for Internet',
+                'Automated System for Character Input'
+            ], 0, 'ASCII stands for American Standard Code for Information Interchange.'],
+            ['ds-basics', 'How many bits are used to represent a character in ASCII?', ['4', '7', '8', '16'], 2,
+                'ASCII uses 8 bits (1 byte) for representation.'],
+            ['ds-basics', 'The ASCII value of \'A\' is:', ['65', '97', '41', '61'], 0, 'The ASCII value of \'A\' is 65.'],
+            ['ds-basics', 'The ASCII value of \'a\' is:', ['65', '97', '41', '61'], 1, 'The ASCII value of \'a\' is 97.'],
+        ];
+
+        // ── Data Representation (30) ──
+        const drTopics = [
+            ['data-rep', 'A bit can have which of the following values?', ['0 or 1', '0 to 9', 'A to Z', 'True or False'],
+                0, 'A bit can be either 0 or 1.'],
+            ['data-rep', 'A byte consists of:', ['4 bits', '8 bits', '16 bits', '32 bits'], 1,
+            'A byte consists of 8 bits.'],
+            ['data-rep', 'Which of the following is a valid integer representation?', ['Signed integer',
+                'Unsigned integer', 'Both signed and unsigned', 'Neither signed nor unsigned'
+            ], 2, 'Both signed and unsigned integers are valid representations.'],
+            ['data-rep', 'In signed integer representation, the left-most bit is used for:', ['Magnitude', 'Sign',
+                'Exponent', 'Mantissa'
+            ], 1, 'The left-most bit is used for the sign.'],
+            ['data-rep', 'In two\'s complement, the binary 1000 represents (for 4 bits):', ['8', '-8', '0', '-0'], 1,
+                '1000 in two\'s complement is -8.'],
+            ['data-rep', 'In two\'s complement, the binary 1111 represents (for 4 bits):', ['15', '-1', '-15', '1'], 1,
+                '1111 in two\'s complement is -1.'],
+            ['data-rep', 'In two\'s complement, the binary 0111 represents (for 4 bits):', ['7', '-7', '8', '-8'], 0,
+                '0111 in two\'s complement is 7.'],
+            ['data-rep', 'IEEE 754 floating point representation splits the number into three parts: mantissa, exponent and:',
+                ['Sign bit', 'Fraction', 'Base', 'Precision'], 0,
+                'The three parts are mantissa, exponent and sign bit.'],
+            ['data-rep', 'In IEEE 754, the value is interpreted roughly as:', ['(-1)^sign × mantissa × 2^exponent',
+                'sign × mantissa × 10^exponent', '(-1)^sign × exponent × 2^mantissa',
+                'sign × exponent × 10^mantissa'
+            ], 0, 'The value is (-1)^sign × mantissa × 2^exponent.'],
+            ['data-rep', 'What is the minimum number that can be stored in a 32-bit unsigned integer?', ['0', '1',
+                    '-2^31', '2^31 - 1'
+            ], 0, 'The minimum is 0.'],
+            ['data-rep', 'What is the maximum number that can be stored in a 32-bit signed integer?', ['2^31 - 1',
+                    '2^32 - 1', '2^31', '2^32'
+            ], 0, 'The maximum is 2^31 - 1 (2,147,483,647).'],
+            ['data-rep', 'What is the minimum number that can be stored in a 32-bit signed integer?', ['-2^31',
+                    '-2^31 + 1', '-2^32', '-2^32 + 1'
+            ], 0, 'The minimum is -2^31 (-2,147,483,648).'],
+            ['data-rep', 'A character is represented using how many bits in ASCII?', ['4', '7', '8', '16'], 2,
+                'ASCII uses 8 bits (1 byte) for a character.'],
+            ['data-rep', 'Which of the following is NOT a primitive data type?', ['Integer', 'Character', 'Array',
+                'Boolean'
+            ], 2, 'Array is a non-primitive data structure.'],
+            ['data-rep', 'The term "data type" and "primitive data type" are often used interchangeably.', ['True',
+                'False'
+            ], 0, 'True – they are often used interchangeably.'],
+            ['data-rep', 'In a 64-bit machine, an integer typically occupies:', ['4 bytes', '8 bytes', '16 bytes',
+                    '2 bytes'
+            ], 1, 'On a 64-bit machine, an integer typically occupies 8 bytes (64 bits).'],
+            ['data-rep', 'In a 32-bit machine, an integer typically occupies:', ['4 bytes', '8 bytes', '16 bytes',
+                    '2 bytes'
+            ], 0, 'On a 32-bit machine, an integer typically occupies 4 bytes (32 bits).'],
+            ['data-rep', 'The ASCII value of \'0\' is:', ['48', '49', '50', '51'], 0, 'The ASCII value of \'0\' is 48.'],
+            ['data-rep', 'The ASCII value of \'B\' is:', ['66', '67', '68', '69'], 0, 'The ASCII value of \'B\' is 66.'],
+            ['data-rep', 'The ASCII value of \'b\' is:', ['98', '99', '100', '101'], 0, 'The ASCII value of \'b\' is 98.'],
+            ['data-rep', 'Which of the following is a valid floating point number?', ['3.14', '3', '3e-2',
+                'All of the above'
+            ], 3, 'All are valid floating point representations.'],
+            ['data-rep', 'In two\'s complement, the binary 1010 represents (for 4 bits):', ['10', '-6', '-10', '6'], 1,
+                '1010 in two\'s complement is -6.'],
+            ['data-rep', 'In two\'s complement, the binary 1100 represents (for 4 bits):', ['12', '-4', '-12', '4'], 1,
+                '1100 in two\'s complement is -4.'],
+            ['data-rep', 'The maximum value of a signed 32-bit integer is:', ['2^31 - 1', '2^32 - 1', '2^31', '2^32'], 0,
+                'Maximum is 2^31 - 1.'],
+            ['data-rep', 'The minimum value of an unsigned 32-bit integer is:', ['0', '1', '-1', '-2^31'], 0,
+                'Minimum is 0.'],
+            ['data-rep', 'A byte can represent how many distinct values?', ['128', '256', '512', '1024'], 1,
+                'A byte (8 bits) can represent 2^8 = 256 distinct values.'],
+            ['data-rep', 'In IEEE 754, the sign bit indicates:', ['Positive or negative', 'Magnitude', 'Exponent',
+                'Precision'
+            ], 0, 'The sign bit indicates whether the number is positive or negative.'],
+            ['data-rep', 'Floating point numbers are used to represent:', ['Only integers', 'Only whole numbers',
+                'Numbers with fractional parts', 'Only characters'
+            ], 2, 'Floating point numbers represent numbers with fractional parts.'],
+            ['data-rep', 'The ASCII table is a standard for:', ['Representing characters', 'Representing integers',
+                'Representing floating point numbers', 'Representing strings'
+            ], 0, 'ASCII is used for character representation.'],
+            ['data-rep', 'In C, a char data type uses how many bytes?', ['1', '2', '4', '8'], 0,
+            'A char uses 1 byte (8 bits) in C.'],
+        ];
+
+        // ── ADT (15) ──
+        const adtTopics = [
+            ['adt', 'ADT stands for:', ['Abstract Data Type', 'Advanced Data Type', 'Array Data Type',
+                'Abstract Derived Type'
+            ], 0, 'ADT stands for Abstract Data Type.'],
+            ['adt', 'An Abstract Data Type specifies:', ['The data type and operations', 'Only the data type',
+                'Only the operations', 'The implementation details'
+            ], 0, 'ADT specifies the data type and the operations that can be performed on it.'],
+            ['adt', 'Which of the following is an example of an ADT?', ['Integer', 'Character', 'Stack', 'Byte'], 2,
+                'Stack is an example of an ADT.'],
+            ['adt', 'In an ADT, the operations on data are hidden from the user.', ['True', 'False'], 0,
+                'True – the operations are abstracted away.'],
+            ['adt', 'Which of the following is an ADT operation for a queue?', ['Push', 'Pop', 'Enqueue', 'Peek'], 2,
+                'Enqueue is an operation on a queue ADT.'],
+            ['adt', 'Which of the following is an ADT operation for a stack?', ['Enqueue', 'Dequeue', 'Push', 'Insert'],
+                2, 'Push is an operation on a stack ADT.'],
+            ['adt', 'An ADT can be implemented using:', ['An array', 'A linked list', 'Both an array and a linked list',
+                'Neither an array nor a linked list'
+            ], 2, 'ADTs like stacks and queues can be implemented using arrays or linked lists.'],
+            ['adt', 'The "abstract" in ADT means:', ['The data type is not concrete', 'The implementation is hidden',
+                'The operations are not defined', 'The data type is not used'
+            ], 1, 'Abstract means the implementation details are hidden.'],
+            ['adt', 'Which of the following is NOT an ADT operation?', ['Push', 'Pop', 'Add', 'Dequeue'], 2,
+                'Add is not a standard ADT operation; it is too generic.'],
+            ['adt', 'A stack ADT follows which principle?', ['FIFO', 'LIFO', 'FILO', 'Both LIFO and FILO'], 1,
+                'Stack follows LIFO (Last In First Out), also known as FILO.'],
+            ['adt', 'A queue ADT follows which principle?', ['FIFO', 'LIFO', 'FILO', 'Both LIFO and FILO'], 0,
+                'Queue follows FIFO (First In First Out).'],
+            ['adt', 'In a stack ADT, the operation "pop" does what?', ['Inserts an element', 'Removes the top element',
+                'Returns the top element without removing', 'Removes the bottom element'
+            ], 1, 'Pop removes the top element from the stack.'],
+            ['adt', 'In a queue ADT, the operation "dequeue" does what?', ['Inserts an element at the rear',
+                'Removes an element from the front', 'Returns the front element without removing',
+                'Removes an element from the rear'
+            ], 1, 'Dequeue removes an element from the front of the queue.'],
+            ['adt', 'In a stack ADT, the operation "peek" does what?', ['Inserts an element', 'Removes the top element',
+                'Returns the top element without removing', 'Removes the bottom element'
+            ], 2, 'Peek returns the top element without removing it.'],
+            ['adt', 'In a queue ADT, the operation "enqueue" does what?', ['Inserts an element at the rear',
+                'Removes an element from the front', 'Returns the front element without removing',
+                'Removes an element from the rear'
+            ], 0, 'Enqueue inserts an element at the rear of the queue.'],
+        ];
+
+        // ── Array (30) ──
+        const arrTopics = [
+            ['array', 'An array is a collection of items of:', ['Different data types', 'Same data type',
+                'Any data type', 'No data type'
+            ], 1, 'An array stores items of the same data type.'],
+            ['array', 'Array elements are stored at:', ['Random memory locations', 'Contiguous memory locations',
+                'Scattered memory locations', 'Virtual memory locations'
+            ], 1, 'Array elements are stored at contiguous memory locations.'],
+            ['array', 'In C, the size of an array:', ['Can be changed at runtime', 'Is fixed once declared',
+                'Can be increased', 'Can be decreased'
+            ], 1, 'In C, array size is fixed once declared.'],
+            ['array', 'Array indexing in C starts at:', ['0', '1', '-1', 'Depends on the compiler'], 0,
+                'Array indexing in C starts at 0.'],
+            ['array', 'If an array has size n, the indexes run from:', ['1 to n', '0 to n-1', '0 to n', '1 to n-1'], 1,
+                'Indexes run from 0 to n-1.'],
+            ['array', 'Which of the following correctly declares an integer array of size 5 in C?',
+                ['int arr[5];', 'int arr(5);', 'array int arr[5];', 'int arr = 5;'], 0,
+                'int arr[5]; is the correct declaration.'],
+            ['array', 'Which of the following initialises an array with values?', ['int arr[] = {1,2,3};',
+                'int arr[3] = {1,2,3};', 'Both A and B', 'Neither A nor B'
+            ], 2, 'Both are valid initialisation methods.'],
+            ['array', 'The values in an uninitialised array are called:', ['Zero values', 'Garbage values',
+                'Null values', 'Undefined values'
+            ], 1, 'Uninitialised array elements contain garbage values.'],
+            ['array', 'How do you store a value in an array at index 2?', ['arr[2] = 9;', 'arr(2) = 9;',
+                'arr{2} = 9;', 'arr = 9;'
+            ], 0, 'arr[2] = 9; stores 9 at index 2.'],
+            ['array', 'How do you read a value from an array at index 3?', ['printf("%d", arr[3]);',
+                'printf("%d", arr(3));', 'printf("%d", arr{3});', 'printf("%d", arr);'
+            ], 0, 'printf("%d", arr[3]); reads the value at index 3.'],
+            ['array', 'In C, the size of an integer is typically:', ['2 bytes', '4 bytes', '8 bytes',
+                'Depends on the system'
+            ], 3, 'The size of int depends on the system (4 bytes on 32-bit, 4 or 8 on 64-bit).'],
+            ['array', 'An array of 5 integers allocates how many bytes on a 32-bit system?', ['10 bytes', '20 bytes',
+                '40 bytes', '5 bytes'
+            ], 1, '5 integers × 4 bytes each = 20 bytes.'],
+            ['array', 'An array of 5 integers allocates how many bytes on a 64-bit system?', ['20 bytes', '40 bytes',
+                '10 bytes', '80 bytes'
+            ], 1, '5 integers × 8 bytes each = 40 bytes.'],
+            ['array', 'The name of an array in C represents:', ['The first element', 'The address of the first element',
+                'The size of the array', 'The last element'
+            ], 1, 'The array name represents the address of the first element.'],
+            ['array', 'Which function is used to print an array in the provided code?', ['print_array()',
+                'display_array()', 'show_array()', 'array_print()'
+            ], 1, 'The function is display_array().'],
+            ['array', 'In the array insertion code, what happens to the last element when inserting?', ['It is shifted',
+                'It is removed', 'It is duplicated', 'It is ignored'
+            ], 1, 'The last element is removed from the array.'],
+            ['array', 'In the array deletion code, what is the last element set to after deletion?', ['0', 'NULL', '-1',
+                'Garbage'
+            ], 2, 'The last element is set to -1.'],
+            ['array', 'The function delete_element_by_position takes which parameters?', ['array, value, position',
+                'array, position', 'array, value', 'array, index'
+            ], 1, 'It takes the array and the position to delete.'],
+            ['array', 'The function delete_element_by_value takes which parameters?', ['array, value, position',
+                'array, position', 'array, value', 'array, index'
+            ], 2, 'It takes the array and the value to delete.'],
+            ['array', 'In the insert_element_by_position function, what does MAX represent?', ['The current size',
+                'The maximum size', 'The index', 'The value'
+            ], 1, 'MAX represents the maximum size of the array.'],
+            ['array', 'If MAX is 5 and we try to insert at position 6, what happens?', ['The element is inserted',
+                'An error message is shown', 'The array is resized', 'The program crashes'
+            ], 1, 'An error message is shown: "The position selected for insertion is outside the array."'],
+            ['array', 'In the array code, what is the default value for uninitialised array elements?', ['0', 'NULL',
+                'Garbage value', 'Undefined'
+            ], 2, 'Uninitialised elements contain garbage values.'],
+            ['array', 'Which of the following is a valid way to declare an array in C?', ['int arr[5];',
+                'int arr[] = {1,2,3};', 'Both A and B', 'Neither A nor B'
+            ], 2, 'Both are valid declarations.'],
+            ['array', 'The display_array function prints the array in which order?', ['Reverse order',
+                'From first to last', 'From last to first', 'Random order'
+            ], 1, 'It prints from first to last element.'],
+            ['array', 'In the insert_element_by_position code, why is the loop starting from MAX-2?',
+                ['To shift elements to the right', 'To shift elements to the left', 'To find the position',
+                    'To delete elements'
+                ], 0, 'The loop shifts elements to the right to make space for the new element.'],
+            ['array', 'In the delete_element_by_position code, why is the loop going up to MAX-2?',
+                ['To shift elements to the right', 'To shift elements to the left', 'To find the position',
+                    'To delete elements'
+                ], 1, 'The loop shifts elements to the left to fill the gap.'],
+            ['array', 'An array is a linear data structure.', ['True', 'False'], 0, 'True – an array is a linear data structure.'],
+            ['array', 'Array elements can be of different data types in C.', ['True', 'False'], 1,
+                'False – all elements must be of the same data type.'],
+            ['array', 'In C, arrays can be resized after declaration.', ['True', 'False'], 1,
+                'False – array size is fixed in C.'],
+            ['array', 'The & operator is used to access the address of an array element.', ['True', 'False'], 0,
+                'True – &arr[i] gives the address of arr[i].'],
+        ];
+
+        // ── Stack (25) ──
+        const stackTopics = [
+            ['stack', 'Stack is a linear data structure that follows:', ['FIFO', 'LIFO', 'FILO', 'Both B and C'], 1,
+                'Stack follows LIFO (Last In First Out), also known as FILO.'],
+            ['stack', 'The operation to insert an element onto a stack is called:', ['Pop', 'Push', 'Enqueue',
+                'Dequeue'
+            ], 1, 'Push inserts an element onto the stack.'],
+            ['stack', 'The operation to remove an element from a stack is called:', ['Pop', 'Push', 'Enqueue',
+                'Dequeue'
+            ], 0, 'Pop removes the top element from the stack.'],
+            ['stack', 'In the stack implementation, what is the initial value of top?', ['0', '-1', 'MAX-1', '1'], 1,
+                'top is initialised to -1 to indicate an empty stack.'],
+            ['stack', 'In the push operation, what is the first step?', ['Insert the element', 'Increment top',
+                'Check if stack is full', 'Return the element'
+            ], 2, 'First check if the stack is full (overflow condition).'],
+            ['stack', 'In the pop operation, what is the first step?', ['Return the element', 'Decrement top',
+                'Check if stack is empty', 'Save the element'
+            ], 2, 'First check if the stack is empty (underflow condition).'],
+            ['stack', 'The peek operation returns:', ['The top element and removes it', 'The top element without removing',
+                'The bottom element', 'The size of the stack'
+            ], 1, 'Peek returns the top element without removing it.'],
+            ['stack', 'In the stack code, what does MAX define?', ['The current size', 'The maximum size',
+                'The top index', 'The bottom index'
+            ], 1, 'MAX defines the maximum size of the stack.'],
+            ['stack', 'What happens when you push onto a full stack?', ['Stack overflow', 'Stack underflow',
+                'The element is pushed anyway', 'The stack is resized'
+            ], 0, 'A stack overflow occurs when pushing onto a full stack.'],
+            ['stack', 'What happens when you pop from an empty stack?', ['Stack overflow', 'Stack underflow',
+                'The element is popped anyway', 'The stack is resized'
+            ], 1, 'A stack underflow occurs when popping from an empty stack.'],
+            ['stack', 'In the stack code, what is the name of the stack array?', ['stack', 'mystack', 'arr', 'stk'], 1,
+                'The stack is named mystack.'],
+            ['stack', 'In the stack code, the display function prints elements from:', ['Top to bottom',
+                'Bottom to top', 'First to last', 'Last to first'
+            ], 0, 'It prints from top to bottom.'],
+            ['stack', 'The push function takes which parameters in the code?', ['int mystack[], int val',
+                'int mystack[]', 'int val', 'int mystack[], int top'
+            ], 0, 'It takes the stack array and the value to push.'],
+            ['stack', 'The pop function returns:', ['void', 'int', 'char', 'float'], 1, 'It returns an integer value.'],
+            ['stack', 'What is the value of top after popping the last element from a stack?', ['0', '-1', 'MAX-1',
+                'Remains the same'
+            ], 1, 'After popping the last element, top becomes -1.'],
+            ['stack', 'What is the value of top after pushing the first element onto an empty stack?', ['0', '1', '-1',
+                'MAX-1'
+            ], 0, 'After pushing the first element, top becomes 0.'],
+            ['stack', 'LIFO stands for:', ['Last In First Out', 'First In Last Out', 'Last In Last Out',
+                'First In First Out'
+            ], 0, 'LIFO stands for Last In First Out.'],
+            ['stack', 'Which of the following is NOT a stack operation?', ['Push', 'Pop', 'Enqueue', 'Peek'], 2,
+                'Enqueue is a queue operation, not a stack operation.'],
+            ['stack', 'A stack can be implemented using:', ['An array only', 'A linked list only',
+                'Both an array and a linked list', 'Neither an array nor a linked list'
+            ], 2, 'A stack can be implemented using an array or a linked list.'],
+            ['stack', 'In the stack implementation, what is the function to print the stack called?',
+                ['print_stack()', 'display()', 'show()', 'stack_print()'], 1, 'The function is called display().'],
+            ['stack', 'What is the time complexity of push and pop operations in a stack implemented with an array?',
+                ['O(1)', 'O(n)', 'O(log n)', 'O(n^2)'], 0, 'Push and pop are O(1) operations.'],
+            ['stack', 'What is the time complexity of peek in a stack implemented with an array?', ['O(1)', 'O(n)',
+                'O(log n)', 'O(n^2)'
+            ], 0, 'Peek is an O(1) operation.'],
+            ['stack', 'In the push operation, what happens after checking if the stack is full?', ['top is decremented',
+                'top is incremented', 'top remains the same', 'top is set to 0'
+            ], 1, 'top is incremented to point to the new top.'],
+            ['stack', 'In the pop operation, what happens after checking if the stack is empty?', ['top is decremented',
+                'top is incremented', 'top remains the same', 'top is set to -1'
+            ], 0, 'top is decremented after saving the value.'],
+            ['stack', 'The main function in the stack code demonstrates:', ['Push, pop, display and peek operations',
+                'Only push and pop', 'Only display and peek', 'Only push'
+            ], 0, 'It demonstrates push, pop, display and peek operations.'],
+        ];
+
+        // ── Queue (25) ──
+        const queueTopics = [
+            ['queue', 'Queue is a linear data structure that follows:', ['LIFO', 'FIFO', 'FILO', 'Both B and C'], 1,
+                'Queue follows FIFO (First In First Out).'],
+            ['queue', 'The operation to insert an element into a queue is called:', ['Push', 'Pop', 'Enqueue',
+                'Dequeue'
+            ], 2, 'Enqueue inserts an element at the rear of the queue.'],
+            ['queue', 'The operation to remove an element from a queue is called:', ['Push', 'Pop', 'Enqueue',
+                'Dequeue'
+            ], 3, 'Dequeue removes an element from the front of the queue.'],
+            ['queue', 'In the queue implementation, what are the initial values of front and rear?', ['0, 0', '-1, -1',
+                'MAX-1, MAX-1', '1, 1'
+            ], 1, 'front and rear are initialised to -1.'],
+            ['queue', 'In the enqueue operation, what is the first step?', ['Insert the element',
+                'Check if queue is full', 'Increment rear', 'Check if queue is empty'
+            ], 1, 'First check if the queue is full (overflow condition).'],
+            ['queue', 'In the dequeue operation, what is the first step?', ['Return the element',
+                'Check if queue is empty', 'Increment front', 'Save the element'
+            ], 1, 'First check if the queue is empty (underflow condition).'],
+            ['queue', 'In the queue code, what does MAX define?', ['The current size', 'The maximum size',
+                'The front index', 'The rear index'
+            ], 1, 'MAX defines the maximum size of the queue.'],
+            ['queue', 'What happens when you enqueue onto a full queue?', ['Queue overflow', 'Queue underflow',
+                'The element is enqueued anyway', 'The queue is resized'
+            ], 0, 'A queue overflow occurs when enqueuing onto a full queue.'],
+            ['queue', 'What happens when you dequeue from an empty queue?', ['Queue overflow', 'Queue underflow',
+                'The element is dequeued anyway', 'The queue is resized'
+            ], 1, 'A queue underflow occurs when dequeuing from an empty queue.'],
+            ['queue', 'In the queue code, what is the name of the queue array?', ['queue', 'myqueue', 'arr', 'q'], 0,
+                'The queue is named queue.'],
+            ['queue', 'In the queue code, the display function prints elements from:', ['Front to rear',
+                'Rear to front', 'First to last', 'Last to first'
+            ], 0, 'It prints from front to rear.'],
+            ['queue', 'The enqueue function takes which parameters in the code?', ['int num', 'int queue[]', 'void',
+                'int front, int rear'
+            ], 0, 'It takes the value to enqueue as a parameter.'],
+            ['queue', 'The dequeue function returns:', ['void', 'int', 'char', 'float'], 1, 'It returns an integer value.'],
+            ['queue', 'What is the value of front after dequeuing the last element from a queue?', ['0', '-1', 'MAX-1',
+                'Remains the same'
+            ], 1, 'After dequeuing the last element, front and rear are set to -1.'],
+            ['queue', 'What is the value of rear after enqueuing the first element into an empty queue?', ['0', '1',
+                '-1', 'MAX-1'
+            ], 0, 'After enqueuing the first element, rear becomes 0.'],
+            ['queue', 'FIFO stands for:', ['First In First Out', 'First In Last Out', 'Last In First Out',
+                'Last In Last Out'
+            ], 0, 'FIFO stands for First In First Out.'],
+            ['queue', 'Which of the following is NOT a queue operation?', ['Enqueue', 'Dequeue', 'Push', 'Peek'], 2,
+                'Push is a stack operation, not a queue operation.'],
+            ['queue', 'A queue can be implemented using:', ['An array only', 'A linked list only',
+                'Both an array and a linked list', 'Neither an array nor a linked list'
+            ], 2, 'A queue can be implemented using an array or a linked list.'],
+            ['queue', 'In the queue implementation, what is the function to print the queue called?',
+                ['print_queue()', 'display()', 'show()', 'queue_print()'], 1, 'The function is called display().'],
+            ['queue', 'What is the limitation of the queue implementation provided?', ['It cannot enqueue',
+                'It cannot dequeue', 'It does not shift elements when dequeuing', 'It has a fixed size'
+            ], 2, 'The implementation does not shift elements when dequeuing unless the last element is dequeued.'],
+            ['queue', 'What is the time complexity of enqueue and dequeue operations in a queue implemented with an array?',
+                ['O(1)', 'O(n)', 'O(log n)', 'O(n^2)'], 0, 'Enqueue and dequeue are O(1) operations.'],
+            ['queue', 'What is the time complexity of peek in a queue implemented with an array?', ['O(1)', 'O(n)',
+                'O(log n)', 'O(n^2)'
+            ], 0, 'Peek is an O(1) operation.'],
+            ['queue', 'In the enqueue operation, what happens after checking if the queue is full?', ['front is set to 0',
+                'rear is incremented', 'rear is decremented', 'front is incremented'
+            ], 1, 'rear is incremented to point to the new rear.'],
+            ['queue', 'In the dequeue operation, what happens after checking if the queue is empty?', ['front is decremented',
+                'front is incremented', 'rear is incremented', 'rear is decremented'
+            ], 1, 'front is incremented to point to the new front.'],
+            ['queue', 'The main function in the queue code demonstrates:', ['Enqueue, dequeue and display operations',
+                'Only enqueue and dequeue', 'Only display and peek', 'Only enqueue'
+            ], 0, 'It demonstrates enqueue, dequeue and display operations.'],
+        ];
+
+        // ── Expressions (40) ──
+        const exprTopics = [
+            ['expression', 'Which of the following is an infix expression?', ['+ 5 8', '5 8 +', '5 + 8', '5 8'], 2,
+                '5 + 8 is an infix expression (operand operator operand).'],
+            ['expression', 'Which of the following is a prefix expression?', ['+ 5 8', '5 8 +', '5 + 8', '5 8'], 0,
+                '+ 5 8 is a prefix expression (operator operand operand).'],
+            ['expression', 'Which of the following is a postfix expression?', ['+ 5 8', '5 8 +', '5 + 8', '5 8'], 1,
+                '5 8 + is a postfix expression (operand operand operator).'],
+            ['expression', 'In the expression 7 + 5 * 6 - 12 / 4, which operation is performed first?', ['Addition',
+                'Multiplication', 'Subtraction', 'Division'
+            ], 1, 'Multiplication has higher precedence than addition and subtraction.'],
+            ['expression', 'In the expression 40 / 4 / 2 * 5, which operation is performed first?', ['Division 40/4',
+                'Division 4/2', 'Multiplication 2*5', 'Division 40/2'
+            ], 0, 'Division and multiplication are left-associative, so 40/4 is performed first.'],
+            ['expression', 'In the expression 2 + 5 ^ 2 ^ 3, which operation is performed first?', ['Addition 2+5',
+                'Exponent 5^2', 'Exponent 2^3', 'Exponent 5^2^3'
+            ], 1, 'Exponent is right-associative, so 5^2 is performed first.'],
+            ['expression', 'What is the result of 7 + 5 * 6 - 12 / 4?', ['29', '34', '32', '30'], 1,
+                '7 + 30 - 3 = 34. Multiplication and division first.'],
+            ['expression', 'What is the result of 40 / 4 / 2 * 5?', ['25', '5', '10', '20'], 0,
+                '40/4=10, 10/2=5, 5*5=25.'],
+            ['expression', 'What is the result of 2 + 5 ^ 2 ^ 3?', ['2 + 5^8 = 2 + 390625 = 390627',
+                '2 + 25^3 = 2 + 15625 = 15627', '7^2^3', '2 + 5^6'
+            ], 0, 'Exponent is right-associative, so 2^3=8, 5^8=390625, 2+390625=390627.'],
+            ['expression', 'What is BODMAS?', ['Bracket, Of, Division, Multiplication, Addition, Subtraction',
+                'Bracket, Order, Division, Multiplication, Addition, Subtraction',
+                'Bracket, Of, Decimal, Multiplication, Addition, Subtraction',
+                'Bracket, Order, Decimal, Multiplication, Addition, Subtraction'
+            ], 0, 'BODMAS stands for Bracket, Of, Division, Multiplication, Addition, Subtraction.'],
+            ['expression', 'What is PEDMAS?', ['Parenthesis, Exponent, Division, Multiplication, Addition, Subtraction',
+                'Parenthesis, Exponent, Decimal, Multiplication, Addition, Subtraction',
+                'Parenthesis, Order, Division, Multiplication, Addition, Subtraction',
+                'Parenthesis, Order, Decimal, Multiplication, Addition, Subtraction'
+            ], 0, 'PEDMAS stands for Parenthesis, Exponent, Division, Multiplication, Addition, Subtraction.'],
+            ['expression', 'Which operator has the highest precedence?', ['Addition', 'Multiplication', 'Parenthesis',
+                'Subtraction'
+            ], 2, 'Parenthesis has the highest precedence.'],
+            ['expression', 'Which operator has the lowest precedence?', ['Addition', 'Subtraction', 'Multiplication',
+                'Parenthesis'
+            ], 0, 'Addition and subtraction have the lowest precedence.'],
+            ['expression', 'Which operators are left-associative?', ['+ and -', '* and /', 'Both A and B', '^'], 2,
+                '+ and - are left-associative, and * and / are left-associative.'],
+            ['expression', 'Which operator is right-associative?', ['+', '*', '^', '/'], 2,
+            'The exponent operator (^) is right-associative.'],
+            ['expression', 'What is the prefix form of (2 + 8) * 5?', ['* + 2 8 5', '+ 2 8 * 5', '* 5 + 2 8',
+                '+ * 2 8 5'
+            ], 0, 'Prefix: * + 2 8 5.'],
+            ['expression', 'What is the postfix form of (2 + 8) * 5?', ['2 8 + 5 *', '2 8 5 + *', '* 2 8 + 5',
+                '2 8 * 5 +'
+            ], 0, 'Postfix: 2 8 + 5 *.'],
+            ['expression', 'What is the prefix form of (5 + 8) * (7 + 2)?', ['* + 5 8 + 7 2', '+ 5 8 * + 7 2',
+                '* + 7 2 + 5 8', '+ * 5 8 7 2'
+            ], 0, 'Prefix: * + 5 8 + 7 2.'],
+            ['expression', 'What is the postfix form of (5 + 8) * (7 + 2)?', ['5 8 + 7 2 + *', '5 8 7 2 + * +',
+                '5 8 + * 7 2 +', '5 8 7 2 * + +'
+            ], 0, 'Postfix: 5 8 + 7 2 + *.'],
+            ['expression', 'What is the prefix form of (6 / 2) + ((7 * 2 ^ 11) + (6 / 5))?', ['+ / 6 2 + * 7 ^ 2 11 / 6 5',
+                '+ / 6 2 + * 7 2 ^ 11 / 6 5', '/ + 6 2 + * 7 ^ 2 11 / 6 5',
+                '+ / 6 2 * + 7 ^ 2 11 / 6 5'
+            ], 0, 'The correct prefix form is + / 6 2 + * 7 ^ 2 11 / 6 5.'],
+            ['expression', 'What is the postfix form of (6 / 2) + ((7 * 2) + (6 / 5))?', ['6 2 / 7 2 * 6 5 / + +',
+                '6 2 7 2 * 6 5 / + / +', '6 2 / 7 2 * + 6 5 / +', '6 2 7 2 * + 6 5 / + /'
+            ], 0, 'Postfix: 6 2 / 7 2 * 6 5 / + +.'],
+            ['expression', 'The Shunting Yard algorithm is used for:', ['Converting infix to postfix',
+                'Converting postfix to infix', 'Evaluating postfix expressions',
+                'Converting prefix to infix'
+            ], 0, 'The Shunting Yard algorithm converts infix to postfix.'],
+            ['expression', 'Who developed the Shunting Yard algorithm?', ['Alan Turing', 'Edsger Dijkstra',
+                'Donald Knuth', 'John von Neumann'
+            ], 1, 'Edsger Dijkstra developed the Shunting Yard algorithm.'],
+            ['expression', 'In the Shunting Yard algorithm, what is used to hold operators?', ['A queue', 'A stack',
+                'An array', 'A linked list'
+            ], 1, 'A stack is used to hold operators.'],
+            ['expression', 'In the Shunting Yard algorithm, what is used to hold the output?', ['A stack', 'A queue',
+                'An array', 'A linked list'
+            ], 1, 'A queue is used to hold the output (postfix expression).'],
+            ['expression', 'In the Shunting Yard algorithm, when an operand is scanned, what happens?',
+                ['It is pushed onto the stack', 'It is added to the output queue',
+                    'It is compared with the top of the stack', 'It is discarded'
+                ], 1, 'Operands are added directly to the output queue.'],
+            ['expression', 'In the Shunting Yard algorithm, when a \'(\' is scanned, what happens?',
+                ['It is added to the output queue', 'It is pushed onto the stack', 'It is discarded',
+                    'It is compared with the top of the stack'
+                ], 1, 'Opening parenthesis is pushed onto the stack.'],
+            ['expression', 'In the Shunting Yard algorithm, when a \')\' is scanned, what happens?',
+                ['It is pushed onto the stack', 'It is added to the output queue',
+                    'Pop from stack and add to output until \'(\' is found', 'It is discarded'
+                ], 2, 'Pop from stack and add to output until \'(\' is found, then discard the \'(\'.'],
+            ['expression', 'In the Shunting Yard algorithm, when an operator is scanned, what happens?',
+                ['It is added to the output queue', 'It is pushed onto the stack',
+                    'While top has higher precedence, pop and add to output, then push the operator',
+                    'It is discarded'
+                ], 2, 'While top has higher precedence (or same precedence and left-associative), pop and add to output, then push the operator.'],
+            ['expression', 'After the entire infix expression is scanned, what happens in the Shunting Yard algorithm?',
+                ['The output queue is empty', 'All remaining operators are popped from stack and added to output',
+                    'The stack is cleared', 'The algorithm ends'
+                ], 1, 'All remaining operators are popped from the stack and added to the output queue.'],
+            ['expression', 'Postfix evaluation uses which data structure?', ['Queue', 'Stack', 'Array', 'Tree'], 1,
+                'Postfix evaluation uses a stack.'],
+            ['expression', 'In postfix evaluation, when an operand is scanned, what happens?', ['It is pushed onto the stack',
+                'It is added to the output', 'It is discarded', 'It is compared with the top'
+            ], 0, 'Operands are pushed onto the stack.'],
+            ['expression', 'In postfix evaluation, when an operator is scanned, what happens?',
+                ['It is pushed onto the stack', 'Two operands are popped, the operation is performed, and the result is pushed',
+                    'It is added to the output', 'It is discarded'
+                ], 1, 'Two operands are popped, the operation is performed, and the result is pushed.'],
+            ['expression', 'What is the result of postfix expression: 5 3 16 * 2 3 ^ / +?', ['11', '10', '12', '13'], 0,
+                '5 + (3*16)/(2^3) = 5 + 48/8 = 5 + 6 = 11.'],
+            ['expression', 'What is the result of postfix expression: 5 6 2 + * 12 4 / -?', ['37', '38', '36', '35'], 0,
+                '5*(6+2) - 12/4 = 5*8 - 3 = 40 - 3 = 37.'],
+            ['expression', 'In postfix evaluation, what remains on the stack at the end?', ['Two values',
+                'One value (the result)', 'Zero values', 'Multiple values'
+            ], 1, 'At the end, one value remains on the stack, which is the result.'],
+            ['expression', 'What is the infix form of the postfix expression: 2 3 + 4 *?', ['2 + 3 * 4',
+                '(2 + 3) * 4', '2 * 3 + 4', '2 + 3 * 4'
+            ], 1, 'Postfix: 2 3 + 4 * = (2 + 3) * 4.'],
+            ['expression', 'What is the infix form of the prefix expression: * + 2 3 4?', ['2 + 3 * 4',
+                '(2 + 3) * 4', '2 * 3 + 4', '2 + 3 * 4'
+            ], 1, 'Prefix: * + 2 3 4 = (2 + 3) * 4.'],
+            ['expression', 'What is the prefix form of the postfix expression: 2 3 + 4 *?', ['* + 2 3 4',
+                '+ 2 3 * 4', '* 4 + 2 3', '+ * 2 3 4'
+            ], 0, 'Postfix: 2 3 + 4 * → Prefix: * + 2 3 4.'],
+            ['expression', 'What is the postfix form of the prefix expression: * + 2 3 4?', ['2 3 + 4 *',
+                '2 3 4 * +', '2 + 3 4 *', '2 3 4 + *'
+            ], 0, 'Prefix: * + 2 3 4 → Postfix: 2 3 + 4 *.'],
+        ];
+
+        // ── Shunting Yard (15) ──
+        const shuntTopics = [
+            ['shunting', 'The Shunting Yard algorithm is also known as:', ['Infix to Postfix conversion',
+                'Postfix to Infix conversion', 'Prefix to Infix conversion', 'Postfix evaluation'
+            ], 0, 'It is also known as the Infix to Postfix conversion algorithm.'],
+            ['shunting', 'In the Shunting Yard algorithm, what is the role of the stack?', ['To hold operands',
+                'To hold operators and delimiters', 'To hold the output', 'To hold the final result'
+            ], 1, 'The stack holds operators and delimiters.'],
+            ['shunting', 'In the Shunting Yard algorithm, what is the role of the queue?', ['To hold operands',
+                'To hold operators', 'To hold the output (postfix expression)', 'To hold the final result'
+            ], 2, 'The queue holds the output (postfix expression).'],
+            ['shunting', 'In the Shunting Yard algorithm, what happens when an opening parenthesis is encountered?',
+                ['It is added to the output queue', 'It is pushed onto the stack', 'It is discarded',
+                    'It causes an error'
+                ], 1, 'An opening parenthesis is pushed onto the stack.'],
+            ['shunting', 'In the Shunting Yard algorithm, what happens when a closing parenthesis is encountered?',
+                ['It is pushed onto the stack', 'It is added to the output queue',
+                    'Pop from stack and add to output until \'(\' is found, then discard \'(\'',
+                    'It causes an error'
+                ], 2, 'Pop from stack and add to output until \'(\' is found, then discard the \'(\'.'],
+            ['shunting', 'In the Shunting Yard algorithm, when is an operator popped from the stack?',
+                ['When the stack is empty', 'When the operator has higher precedence than the top of the stack',
+                    'When the top of the stack has higher precedence or same precedence and left-associative',
+                    'When the operator is scanned'
+                ], 2, 'An operator is popped when the top of the stack has higher precedence or same precedence and left-associative.'],
+            ['shunting', 'What is the time complexity of the Shunting Yard algorithm?', ['O(n)', 'O(n^2)', 'O(log n)',
+                'O(1)'
+            ], 0, 'The Shunting Yard algorithm has O(n) time complexity.'],
+            ['shunting', 'The Shunting Yard algorithm can handle which types of operators?', ['Only binary operators',
+                'Only unary operators', 'Both binary and unary operators', 'Only arithmetic operators'
+            ], 2, 'It can handle both binary and unary operators.'],
+            ['shunting', 'In the Shunting Yard algorithm, what is the final step?',
+                ['Pop all remaining operators from stack and add to output', 'Clear the stack',
+                    'Reverse the output queue', 'Evaluate the output'
+                ], 0, 'All remaining operators are popped from the stack and added to the output queue.'],
+            ['shunting', 'The Shunting Yard algorithm was invented by:', ['Alan Turing', 'Edsger Dijkstra',
+                'Donald Knuth', 'John von Neumann'
+            ], 1, 'It was invented by Edsger Dijkstra.'],
+            ['shunting', 'In the Shunting Yard algorithm, when an operand is scanned, it is:', ['Pushed onto the stack',
+                'Added to the output queue', 'Compared with the top of the stack', 'Discarded'
+            ], 1, 'Operands are added directly to the output queue.'],
+            ['shunting', 'In the Shunting Yard algorithm, what does the algorithm do with spaces?', ['They are pushed onto the stack',
+                'They are added to the output queue', 'They are ignored', 'They cause an error'
+            ], 2, 'Spaces are ignored in the algorithm.'],
+            ['shunting', 'The Shunting Yard algorithm is used in which phase of compilation?', ['Lexical analysis',
+                'Syntax analysis', 'Semantic analysis', 'Code generation'
+            ], 1, 'It is used in syntax analysis (parsing) for expression evaluation.'],
+            ['shunting', 'In the Shunting Yard algorithm, what is the precedence of addition and subtraction?',
+                ['Highest', 'Medium', 'Lowest', 'Equal to multiplication'
+            ], 2, 'Addition and subtraction have the lowest precedence.'],
+            ['shunting', 'In the Shunting Yard algorithm, what is the precedence of multiplication and division?',
+                ['Highest', 'Medium', 'Lowest', 'Equal to addition'
+            ], 1, 'Multiplication and division have medium precedence.'],
+        ];
+
+        // ── Postfix Evaluation (15) ──
+        const postfixTopics = [
+            ['postfix', 'Postfix evaluation is the process of computing the value of an expression written in:',
+                ['Infix notation', 'Prefix notation', 'Postfix notation', 'All of the above'
+                ], 2, 'Postfix evaluation is for expressions written in postfix notation.'],
+            ['postfix', 'Postfix notation is also called:', ['Polish Notation', 'Reverse Polish Notation',
+                'Infix Notation', 'Prefix Notation'
+            ], 1, 'Postfix notation is also called Reverse Polish Notation (RPN).'],
+            ['postfix', 'In postfix evaluation, operands are:', ['Pushed onto the stack', 'Added to the output',
+                'Discarded', 'Compared with the top'
+            ], 0, 'Operands are pushed onto the stack.'],
+            ['postfix', 'In postfix evaluation, when an operator is encountered, what happens?',
+                ['It is pushed onto the stack', 'Two operands are popped, the operation is performed, and the result is pushed',
+                    'It is added to the output', 'It is discarded'
+                ], 1, 'Two operands are popped, the operation is performed, and the result is pushed.'],
+            ['postfix', 'In postfix evaluation, what is the final state of the stack?', ['The stack is empty',
+                'The stack contains one value (the result)', 'The stack contains multiple values',
+                'The stack contains the operators'
+            ], 1, 'The stack contains one value, which is the final result.'],
+            ['postfix', 'What is the result of the postfix expression: 3 4 + 2 *?', ['14', '10', '12', '16'], 0,
+                '3+4=7, 7*2=14.'],
+            ['postfix', 'What is the result of the postfix expression: 5 2 3 + *?', ['25', '20', '15', '10'], 0,
+                '2+3=5, 5*5=25.'],
+            ['postfix', 'What is the result of the postfix expression: 6 2 / 3 + 4 *?', ['16', '18', '20', '15'], 0,
+                '6/2=3, 3+3=6, 6*4=24.'],
+            ['postfix', 'What is the result of the postfix expression: 8 2 3 * + 4 -?', ['10', '8', '12', '6'], 0,
+                '2*3=6, 8+6=14, 14-4=10.'],
+            ['postfix', 'In postfix evaluation, what is the first step?', ['Initialize an empty stack',
+                'Scan the expression left to right', 'Push operands onto the stack',
+                'Pop operands when an operator is encountered'
+            ], 0, 'The first step is to initialize an empty stack.'],
+            ['postfix', 'In postfix evaluation, the expression is scanned:', ['Left to right', 'Right to left',
+                'From the middle', 'In any order'
+            ], 0, 'Postfix expressions are evaluated left to right.'],
+            ['postfix', 'In postfix evaluation, when an operator is applied, the operands are popped in which order?',
+                ['First popped is operand1, second is operand2', 'First popped is operand2, second is operand1',
+                    'Both are popped simultaneously', 'The order does not matter'
+                ], 0, 'The first popped is operand1 (left operand) and the second is operand2 (right operand).'],
+            ['postfix', 'What is the result of the postfix expression: 9 3 / 2 4 + *?', ['18', '20', '24', '30'], 0,
+                '9/3=3, 2+4=6, 3*6=18.'],
+            ['postfix', 'What is the result of the postfix expression: 7 2 3 * - 4 +?', ['5', '7', '9', '3'], 0,
+                '2*3=6, 7-6=1, 1+4=5.'],
+            ['postfix', 'Postfix evaluation uses which data structure as the primary mechanism?', ['Queue', 'Stack',
+                'Array', 'Linked List'
+            ], 1, 'Postfix evaluation uses a stack as the primary mechanism.'],
+        ];
+
+        // Combine all topics
+        const allTopics = [...dsTopics, ...drTopics, ...adtTopics, ...arrTopics, ...stackTopics, ...queueTopics, ...exprTopics,
+            ...shuntTopics, ...postfixTopics
+        ];
+
+        // Shuffle for variety, but keep deterministic
+        function shuffleArray(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // Seed shuffle with a fixed seed for reproducibility
+        let shuffled = [...allTopics];
+        // Use a simple deterministic shuffle based on id
+        shuffled.sort((a, b) => {
+            // Use the topic as a seed for ordering
+            return a[0].localeCompare(b[0]) || Math.random() - 0.5;
+        });
+
+        // Build MCQ_DATA
+        shuffled.forEach((item, idx) => {
+            const [topic, question, options, correct, explanation] = item;
+            addMCQ(topic, question, options, correct, explanation);
+        });
+
+        // Ensure we have at least 300
+        while (MCQ_DATA.length < 300) {
+            // Duplicate some with variation if needed (but we already have enough)
+            const idx = MCQ_DATA.length % allTopics.length;
+            const item = allTopics[idx];
+            addMCQ(item[0], item[1] + ' (variant)', item[2], item[3], item[4]);
+        }
+
+        // Trim to exactly 300
+        if (MCQ_DATA.length > 300) MCQ_DATA.length = 300;
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // 2. SHORT NOTES DATA (expanded)
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        const NOTES_DATA = [{
+            title: 'What is Data Structure?',
+            tag: 'DS Basics',
+            content: 'A data structure is a specialised format for organising, processing, retrieving and storing data. Data structures frame the organisation of information so that machines and humans can better understand it.'
+        }, {
+            title: 'Classification of Data Structures',
+            tag: 'DS Basics',
+            content: 'Primitive: Integer, Real, Character, Boolean. Non-primitive: Linked lists, stacks, trees, graphs. Non-primitive → Linear (arrays, linked lists, stacks, queues) and Non-linear (trees, graphs).'
+        }, {
+            title: 'Data Representation',
+            tag: 'Data Rep',
+            content: 'Bit (0/1) → Byte (8 bits) → Character (1 byte) → String (multiple characters). Integer: 4 bytes (32 bits). Signed: 1 sign bit + 31 magnitude. Unsigned: 32 bits magnitude.'
+        }, {
+            title: 'Two\'s Complement (4-bit example)',
+            tag: 'Data Rep',
+            content: 'Left-most bit has negative weight (-8). 1000 = -8, 1111 = -1, 0111 = 7, 0000 = 0. Range for 4-bit signed: -8 to +7.'
+        }, {
+            title: 'IEEE 754 Floating Point',
+            tag: 'Data Rep',
+            content: 'Three parts: sign bit, mantissa (significant digits), exponent (binary point scaling). Value ≈ (-1)^sign × mantissa × 2^exponent. Wide range, limited precision.'
+        }, {
+            title: 'ASCII Table',
+            tag: 'ASCII',
+            content: '8-bit character encoding. \'A\' = 65, \'a\' = 97, \'0\' = 48. Control characters: 0-31. Printable: 32-126. DEL = 127.'
+        }, {
+            title: 'Abstract Data Type (ADT)',
+            tag: 'ADT',
+            content: 'Mathematical model that specifies data type and operations without implementation details. Examples: Stack (push, pop), Queue (enqueue, dequeue). Can be implemented with arrays or linked lists.'
+        }, {
+            title: 'Array in C',
+            tag: 'Array',
+            content: 'Collection of same data type at contiguous memory. Fixed size. Index from 0 to n-1. Uninitialised = garbage values. Access: arr[i]. Store: arr[i] = val. Name = address of first element.'
+        }, {
+            title: 'Stack (LIFO)',
+            tag: 'Stack',
+            content: 'Last In First Out. Operations: Push (insert top), Pop (remove top), Peek (view top). Implemented with array (top = -1 initially). Overflow: push on full. Underflow: pop on empty.'
+        }, {
+            title: 'Queue (FIFO)',
+            tag: 'Queue',
+            content: 'First In First Out. Operations: Enqueue (insert rear), Dequeue (remove front), Peek (view front). Implemented with array (front = rear = -1 initially). Overflow/underflow conditions.'
+        }, {
+            title: 'Mathematical Expressions',
+            tag: 'Expression',
+            content: 'Infix: operand operator operand (e.g., 5 + 8). Prefix: operator operand operand (e.g., + 5 8). Postfix: operand operand operator (e.g., 5 8 +). BODMAS / PEDMAS precedence.'
+        }, {
+            title: 'Shunting Yard Algorithm',
+            tag: 'Shunting',
+            content: 'Converts infix to postfix. Uses stack for operators, queue for output. Scan left to right: operands → output; operators → stack with precedence rules; parentheses handled. Developed by Edsger Dijkstra.'
+        }, {
+            title: 'Postfix Evaluation',
+            tag: 'Postfix',
+            content: 'Evaluate left to right using a stack. Operand → push. Operator → pop two operands, apply, push result. Final stack value = result. Example: 5 3 16 * 2 3 ^ / + = 11.'
+        }, {
+            title: 'Operator Precedence',
+            tag: 'Expression',
+            content: 'Highest: ( ) ; 2nd: ^ ; 3rd: *, / ; Lowest: +, -. BODMAS: Brackets, Of, Division, Multiplication, Addition, Subtraction.'
+        }, {
+            title: 'Operator Associativity',
+            tag: 'Expression',
+            content: 'Left-associative: +, -, *, / (evaluate left to right). Right-associative: ^ (evaluate right to left). Parentheses: inner to outer.'
+        }, {
+            title: 'Infix, Prefix, Postfix Conversion',
+            tag: 'Expression',
+            content: 'Infix: (2+8)*5. Prefix: * + 2 8 5. Postfix: 2 8 + 5 *. Use Shunting Yard for automated conversion.'
+        }, ];
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // 3. CODE DATA (with descriptions)
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        const CODE_DATA = {
+            array: {
+                label: 'Array',
+                description: 'Basic array operations: insertion by position, deletion by position and by value, and display. The array size is fixed at compile time.',
+                code: `/*
+CSE2111 Data Structures.
+Array insertion, deletion and printing.
+In this program we have created an array of size 5.
+We can insert any element by position.
+We can delete any element by position.
+We can print the entire array.
+*/
+
+#include <stdio.h>
+#define MAX 5
+
+void display_array(int datarr[]) {
+    int i;
+    printf("\\nARRAY: ");
+    for(i=0; i<MAX; i++) {
+        printf("%d ", datarr[i]);
+    }
+}
+
+int insert_element_by_position(int datarr[], int value, int position) {
+    int index = position - 1;
+    int i;
+    if(position < 1 || position > MAX) {
+        printf("\\nThe position selected for insertion is outside the array.");
+        return -1;
+    }
+    if(MAX == 1) {
+        datarr[MAX-1] = value;
+        printf("\\nElement %d was added in position %d.", value, position);
+        return 0;
+    }
+    for(i = MAX-2; i>=index; i--) {
+        datarr[i+1] = datarr[i];
+    }
+    datarr[index] = value;
+    printf("\\nElement %d was added in position %d.", value, position);
+    return 0;
+}
+
+int delete_element_by_position(int datarr[], int position) {
+    int index = position - 1;
+    int i;
+    if(position < 1 || position > MAX) {
+        printf("\\nThe position selected for deletion is outside the array.");
+        return -1;
+    }
+    if(MAX == 1) {
+        datarr[MAX-1] = -1;
+        printf("\\nElement in position %d was deleted.", position);
+        return 0;
+    }
+    for(i = index; i<MAX-1; i++) {
+        datarr[i] = datarr[i+1];
+    }
+    datarr[MAX-1] = -1;
+    printf("\\nElement in position %d was deleted.", position);
+    return 0;
+}
+
+int main() {
+    int arr[] = {23,77,24,65,55};
+    display_array(arr);
+    insert_element_by_position(arr, 89, 3);
+    display_array(arr);
+    delete_element_by_position(arr, 4);
+    display_array(arr);
+    return 0;
+}`
+            },
+            stack: {
+                label: 'Stack',
+                description: 'Stack implementation using an array with push, pop, peek, and display. LIFO principle. Overflow and underflow checks are included.',
+                code: `/*
+CSE2111 Data Structures.
+Stack implementation using Array.
+Features include Push, Pop, Peek, Print.
+*/
+
+#include <stdio.h>
+#define MAX 5
+
+int mystack[MAX], top=-1;
+
+void push(int mystack[], int val) {
+    if(top == MAX-1) {
+        printf("\\n STACK OVERFLOW");
+    } else {
+        top++;
+        mystack[top] = val;
+    }
+}
+
+int pop(int mystack[]) {
+    int val;
+    if(top == -1) {
+        printf("\\n STACK IS EMPTY");
+        return -1;
+    } else {
+        val = mystack[top];
+        top--;
+        return val;
+    }
+}
+
+void display(int mystack[]) {
+    int i;
+    if(top == -1) {
+        printf("\\n STACK IS EMPTY");
+    } else {
+        for(i=top;i>=0;i--) {
+            printf("\\n %d",mystack[i]);
+        }
+        printf("\\n");
+    }
+}
+
+int peek(int mystack[]) {
+    if(top == -1) {
+        printf("\\n STACK IS EMPTY");
+        return -1;
+    } else
+        return mystack[top];
+}
+
+int main() {
+    display(mystack);
+    push(mystack, 5);
+    push(mystack, 23);
+    push(mystack, 12);
+    display(mystack);
+    pop(mystack);
+    display(mystack);
+    push(mystack, 61);
+    display(mystack);
+    printf("\\nCurrent stack top is %d", peek(mystack));
+    return 0;
+}`
+            },
+            queue: {
+                label: 'Queue',
+                description: 'Queue implementation using an array with enqueue, dequeue, peek, and display. FIFO principle. The implementation has a limitation: it does not shift elements when dequeuing (only resets when empty).',
+                code: `/*
+CSE2111 Data Structures.
+Queue implementation using Array.
+Features include:
+Enqueue (insert element at rear)
+Dequeue (remove element from front)
+Display (print queue)
+Peek (returns the value of the front of the queue)
+*/
+
+#include <stdio.h>
+#define MAX 5
+
+int queue[MAX];
+int front = -1, rear = -1;
+
+void enqueue(int num) {
+    if(rear == MAX-1) {
+        printf("\\n QUEUE OVERFLOW");
+        return;
+    } else if(front == -1 && rear == -1)
+        front = rear = 0;
+    else
+        rear++;
+    queue[rear] = num;
+}
+
+int dequeue() {
+    int val;
+    if(front == -1 || front>rear) {
+        printf("\\n QUEUE IS EMPTY");
+        return -1;
+    } else {
+        val = queue[front];
+        front++;
+        if(front > rear)
+            front = rear = -1;
+        return val;
+    }
+}
+
+int peek() {
+    if(front==-1 || front>rear) {
+        printf("\\n QUEUE IS EMPTY");
+        return -1;
+    } else {
+        return queue[front];
+    }
+}
+
+void display() {
+    int i;
+    printf("\\n");
+    if(front == -1 || front > rear)
+        printf("\\n QUEUE IS EMPTY");
+    else {
+        printf("\\n QUEUE: ");
+        for(i = front;i <= rear;i++)
+            printf("%d ", queue[i]);
+    }
+}
+
+int main() {
+    display();
+    enqueue(33);
+    enqueue(47);
+    enqueue(2);
+    enqueue(68);
+    display();
+    dequeue();
+    dequeue();
+    enqueue(55);
+    display();
+    return 0;
+}`
+            }
+        };
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // 4. APPLICATION STATE
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        let currentPage = 'home';
+        let currentMcqIndex = 0;
+        let filteredMcqs = [];
+        let examQuestions = [];
+        let examIndex = 0;
+        let examTimer = null;
+        let examTime = 25 * 60;
+        let examRunning = false;
+        let examAnswered = 0;
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // 5. DOM REFS
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const menuToggle = document.getElementById('menuToggle');
+        const themeToggle = document.getElementById('themeToggle');
+        const pages = document.querySelectorAll('.page');
+        const navLinks = document.querySelectorAll('.sidebar nav a');
+
+        const mcqContainer = document.getElementById('mcqContainer');
+        const mcqProgressBar = document.getElementById('mcqProgressBar');
+        const mcqProgressText = document.getElementById('mcqProgressText');
+        const mcqScoreBadge = document.getElementById('mcqScoreBadge');
+        const mcqResult = document.getElementById('mcqResult');
+        const prevMcqBtn = document.getElementById('prevMcqBtn');
+        const nextMcqBtn = document.getElementById('nextMcqBtn');
+        const shuffleMcqBtn = document.getElementById('shuffleMcqBtn');
+        const resetCurrentMcqBtn = document.getElementById('resetCurrentMcqBtn');
+        const resetMcqBtn = document.getElementById('resetMcqBtn');
+        const mcqTopicFilter = document.getElementById('mcqTopicFilter');
+        const mcqStatusFilter = document.getElementById('mcqStatusFilter');
+        const mcqSearch = document.getElementById('mcqSearch');
+
+        const notesContainer = document.getElementById('notesContainer');
+        const codeTabs = document.getElementById('codeTabs');
+        const codePanels = document.getElementById('codePanels');
+
+        const examTimerDisplay = document.getElementById('examTimer');
+        const examQuestionCount = document.getElementById('examQuestionCount');
+        const examAnsweredCount = document.getElementById('examAnsweredCount');
+        const examTotalCount = document.getElementById('examTotalCount');
+        const examContainer = document.getElementById('examContainer');
+        const examResult = document.getElementById('examResult');
+        const startExamBtn = document.getElementById('startExamBtn');
+        const endExamBtn = document.getElementById('endExamBtn');
+        const examResetBtn = document.getElementById('examResetBtn');
+        const examQuestionSelect = document.getElementById('examQuestionSelect');
+
+        const attemptedCountEl = document.getElementById('attemptedCount');
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // 6. THEME
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        let dark = localStorage.getItem('cse2111-theme') === 'dark';
+        if (dark) document.documentElement.classList.add('dark');
+        themeToggle.addEventListener('click', () => {
+            dark = !dark;
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('cse2111-theme', dark ? 'dark' : 'light');
+            themeToggle.innerHTML = dark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+        });
+        themeToggle.innerHTML = dark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // 7. NAVIGATION
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        function navigateTo(page) {
+            currentPage = page;
+            pages.forEach(p => p.classList.remove('active'));
+            document.getElementById('page-' + page).classList.add('active');
+            navLinks.forEach(a => a.classList.remove('active'));
+            navLinks.forEach(a => {
+                if (a.dataset.page === page) a.classList.add('active');
+            });
+            if (window.innerWidth <= 820) {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('open');
+            }
+            if (page === 'mcq') renderMcq();
+            if (page === 'notes') renderNotes();
+            if (page === 'code') renderCode();
+            if (page === 'exam') renderExam();
+            if (page === 'home') updateStats();
+        }
+
+        navLinks.forEach(a => {
+            a.addEventListener('click', () => navigateTo(a.dataset.page));
+        });
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('open');
+        });
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('open');
+        });
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // 8. MCQ ENGINE
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        function getFilteredMcqs() {
+            const topic = mcqTopicFilter.value;
+            const status = mcqStatusFilter.value;
+            const search = mcqSearch.value.toLowerCase().trim();
+
+            let result = MCQ_DATA.filter(q => {
+                if (topic !== 'all' && q.topic !== topic) return false;
+                if (status === 'unanswered' && q.answered) return false;
+                if (status === 'answered' && !q.answered) return false;
+                if (status === 'correct' && !(q.answered && q.selected === q.correct)) return false;
+                if (status === 'wrong' && !(q.answered && q.selected !== q.correct)) return false;
+                if (search && !q.question.toLowerCase().includes(search)) return false;
+                return true;
+            });
+            return result;
+        }
+
+        function renderMcq() {
+            filteredMcqs = getFilteredMcqs();
+            if (filteredMcqs.length === 0) {
+                mcqContainer.innerHTML =
+                    `<div style="text-align:center;padding:3rem 0;color:var(--text3);">No questions match your filters.</div>`;
+                updateMcqProgress();
+                return;
+            }
+            if (currentMcqIndex >= filteredMcqs.length) currentMcqIndex = 0;
+            const q = filteredMcqs[currentMcqIndex];
+            if (!q) return;
+
+            const total = filteredMcqs.length;
+            const answered = filteredMcqs.filter(q => q.answered).length;
+            const correct = filteredMcqs.filter(q => q.answered && q.selected === q.correct).length;
+
+            let html = `<div class="mcq-question">
+                <div class="q-meta">
+                    <span>#${q.id}</span>
+                    <span>${q.topic.replace('-',' ').toUpperCase()}</span>
+                    <span>${currentMcqIndex+1} / ${total}</span>
+                    ${q.answered ? (q.selected === q.correct ? '✅ Correct' : '❌ Wrong') : '⏳ Unanswered'}
+                </div>
+                <div class="q-text">${q.question}</div>
+                <div class="options">`;
+
+            const labels = ['A', 'B', 'C', 'D'];
+            q.options.forEach((opt, idx) => {
+                let cls = '';
+                let disabled = '';
+                if (q.answered) {
+                    disabled = 'disabled';
+                    if (idx === q.correct) cls = 'correct';
+                    if (idx === q.selected && idx !== q.correct) cls = 'wrong';
+                }
+                const checked = (q.selected === idx) ? 'checked' : '';
+                html += `
+                    <label class="${cls} ${q.answered ? 'disabled' : ''}">
+                        <input type="radio" name="mcq-${q.id}" value="${idx}" ${checked} ${disabled} />
+                        <span><strong>${labels[idx]}.</strong> ${opt}</span>
+                    </label>
+                `;
+            });
+
+            html += `</div>`;
+            if (q.answered && q.selected !== q.correct) {
+                html += `<div style="margin-top:0.8rem;padding:0.6rem 1rem;background:var(--surface2);border-radius:var(--radius-sm);font-size:0.9rem;color:var(--text2);">
+                    <strong>Explanation:</strong> ${q.explanation || 'No explanation provided.'}
+                </div>`;
+            } else if (q.answered && q.selected === q.correct) {
+                html += `<div style="margin-top:0.8rem;padding:0.6rem 1rem;background:var(--surface2);border-radius:var(--radius-sm);font-size:0.9rem;color:var(--text2);">
+                    ✅ Correct! ${q.explanation || ''}
+                </div>`;
+            }
+            html += `</div>`;
+            mcqContainer.innerHTML = html;
+
+            // Attach listeners to radio buttons
+            mcqContainer.querySelectorAll('input[type="radio"]').forEach(input => {
+                input.addEventListener('change', function() {
+                    if (q.answered) return;
+                    const val = parseInt(this.value);
+                    q.answered = true;
+                    q.selected = val;
+                    localStorage.setItem('cse2111-mcq', JSON.stringify(MCQ_DATA));
+                    renderMcq();
+                    updateMcqProgress();
+                    updateStats();
+                });
+            });
+
+            updateMcqProgress();
+            // Re-bind nav buttons
+            prevMcqBtn.onclick = () => { if (currentMcqIndex > 0) { currentMcqIndex--;
+                    renderMcq(); } };
+            nextMcqBtn.onclick = () => { if (currentMcqIndex < filteredMcqs.length - 1) { currentMcqIndex++;
+                    renderMcq(); } };
+            shuffleMcqBtn.onclick = () => {
+                const current = filteredMcqs[currentMcqIndex];
+                const filtered = getFilteredMcqs();
+                const idx = filtered.findIndex(q => q.id === current.id);
+                if (idx !== -1) currentMcqIndex = idx;
+                renderMcq();
+            };
+            resetCurrentMcqBtn.onclick = () => {
+                q.answered = false;
+                q.selected = null;
+                localStorage.setItem('cse2111-mcq', JSON.stringify(MCQ_DATA));
+                renderMcq();
+                updateMcqProgress();
+                updateStats();
+            };
+        }
+
+        function updateMcqProgress() {
+            const total = MCQ_DATA.length;
+            const answered = MCQ_DATA.filter(q => q.answered).length;
+            const correct = MCQ_DATA.filter(q => q.answered && q.selected === q.correct).length;
+            const pct = total > 0 ? Math.round((answered / total) * 100) : 0;
+            mcqProgressBar.style.width = pct + '%';
+            mcqProgressText.textContent = `${answered} / ${total}`;
+            mcqScoreBadge.textContent = pct + '%';
+            attemptedCountEl.textContent = answered;
+        }
+
+        function updateStats() {
+            const answered = MCQ_DATA.filter(q => q.answered).length;
+            attemptedCountEl.textContent = answered;
+        }
+
+        // ── MCQ Filters ──
+        mcqTopicFilter.addEventListener('change', () => { currentMcqIndex = 0;
+            renderMcq(); });
+        mcqStatusFilter.addEventListener('change', () => { currentMcqIndex = 0;
+            renderMcq(); });
+        mcqSearch.addEventListener('input', () => { currentMcqIndex = 0;
+            renderMcq(); });
+
+        resetMcqBtn.addEventListener('click', () => {
+            if (confirm('Reset all MCQ progress?')) {
+                MCQ_DATA.forEach(q => { q.answered = false;
+                    q.selected = null; });
+                localStorage.setItem('cse2111-mcq', JSON.stringify(MCQ_DATA));
+                currentMcqIndex = 0;
+                renderMcq();
+                updateMcqProgress();
+                updateStats();
+            }
+        });
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // 9. NOTES
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        function renderNotes() {
+            let html = '';
+            NOTES_DATA.forEach(n => {
+                html += `
+                    <div class="note-card">
+                        <span class="note-tag">${n.tag}</span>
+                        <h4>${n.title}</h4>
+                        <p>${n.content}</p>
+                    </div>
+                `;
+            });
+            notesContainer.innerHTML = html;
+        }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // 10. CODE
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        function renderCode() {
+            let html = '';
+            const keys = Object.keys(CODE_DATA);
+            keys.forEach((key, idx) => {
+                const active = idx === 0 ? 'active' : '';
+                const data = CODE_DATA[key];
+                html += `
+                    <div class="code-panel ${active}" data-code="${key}">
+                        <div class="code-description">
+                            <i class="fas fa-info-circle" style="color:var(--primary);"></i> ${data.description}
+                        </div>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>${data.label} <span class="lang">C</span></span>
+                                <button class="copy-btn" data-code="${key}"><i class="fas fa-copy"></i> Copy</button>
+                            </div>
+                            <pre><code>${escapeHtml(data.code)}</code></pre>
+                        </div>
+                    </div>
+                `;
+            });
+            codePanels.innerHTML = html;
+
+            // Copy buttons
+            codePanels.querySelectorAll('.copy-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const key = this.dataset.code;
+                    const code = CODE_DATA[key].code;
+                    navigator.clipboard.writeText(code).then(() => {
+                        const orig = this.innerHTML;
+                        this.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                        setTimeout(() => this.innerHTML = orig, 1500);
+                    });
+                });
+            });
+
+            // Tab switching
+            codeTabs.querySelectorAll('button').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    codeTabs.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    const key = this.dataset.code;
+                    codePanels.querySelectorAll('.code-panel').forEach(p => p.classList.remove('active'));
+                    codePanels.querySelector(`.code-panel[data-code="${key}"]`).classList.add('active');
+                });
+            });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // 11. EXAM PREP
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        function renderExam() {
+            if (examQuestions.length === 0) {
+                examContainer.innerHTML = `
+                    <div style="text-align:center;padding:3rem 0;color:var(--text3);">
+                        <i class="fas fa-hourglass-start" style="font-size:2.5rem;display:block;margin-bottom:0.8rem;"></i>
+                        Press <strong>Start Exam</strong> to begin your timed practice session.
+                    </div>
+                `;
+                return;
+            }
+
+            const q = examQuestions[examIndex];
+            if (!q) return;
+
+            const total = examQuestions.length;
+            const answered = examQuestions.filter(q => q.answered).length;
+
+            let html = `<div class="mcq-question">
+                <div class="q-meta">
+                    <span>Question ${examIndex+1} / ${total}</span>
+                    <span>${q.topic.replace('-',' ').toUpperCase()}</span>
+                    ${q.answered ? (q.selected === q.correct ? '✅ Correct' : '❌ Wrong') : '⏳ Unanswered'}
+                </div>
+                <div class="q-text">${q.question}</div>
+                <div class="options">`;
+
+            const labels = ['A', 'B', 'C', 'D'];
+            q.options.forEach((opt, idx) => {
+                let cls = '';
+                let disabled = '';
+                if (q.answered) {
+                    disabled = 'disabled';
+                    if (idx === q.correct) cls = 'correct';
+                    if (idx === q.selected && idx !== q.correct) cls = 'wrong';
+                }
+                const checked = (q.selected === idx) ? 'checked' : '';
+                html += `
+                    <label class="${cls} ${q.answered ? 'disabled' : ''}">
+                        <input type="radio" name="exam-${q.id}" value="${idx}" ${checked} ${disabled} />
+                        <span><strong>${labels[idx]}.</strong> ${opt}</span>
+                    </label>
+                `;
+            });
+
+            html += `</div>`;
+            if (q.answered && q.selected !== q.correct) {
+                html += `<div style="margin-top:0.8rem;padding:0.6rem 1rem;background:var(--surface2);border-radius:var(--radius-sm);font-size:0.9rem;color:var(--text2);">
+                    <strong>Explanation:</strong> ${q.explanation || 'No explanation provided.'}
+                </div>`;
+            } else if (q.answered && q.selected === q.correct) {
+                html += `<div style="margin-top:0.8rem;padding:0.6rem 1rem;background:var(--surface2);border-radius:var(--radius-sm);font-size:0.9rem;color:var(--text2);">
+                    ✅ Correct! ${q.explanation || ''}
+                </div>`;
+            }
+            html += `</div>`;
+
+            // Nav for exam
+            html += `
+                <div class="mcq-nav">
+                    <div class="btn-group">
+                        <button class="btn btn-outline" id="examPrevBtn"><i class="fas fa-chevron-left"></i> Previous</button>
+                        <button class="btn btn-outline" id="examNextBtn">Next <i class="fas fa-chevron-right"></i></button>
+                    </div>
+                    <div>
+                        <span style="color:var(--text3);font-size:0.9rem;">Answered: ${answered} / ${total}</span>
+                    </div>
+                </div>
+            `;
+
+            examContainer.innerHTML = html;
+
+            // Radio listeners
+            examContainer.querySelectorAll('input[type="radio"]').forEach(input => {
+                input.addEventListener('change', function() {
+                    if (q.answered) return;
+                    const val = parseInt(this.value);
+                    q.answered = true;
+                    q.selected = val;
+                    examAnswered = examQuestions.filter(q => q.answered).length;
+                    examAnsweredCount.textContent = examAnswered;
+                    renderExam();
+                    checkExamComplete();
+                });
+            });
+
+            // Nav buttons
+            document.getElementById('examPrevBtn')?.addEventListener('click', () => {
+                if (examIndex > 0) { examIndex--;
+                    renderExam(); }
+            });
+            document.getElementById('examNextBtn')?.addEventListener('click', () => {
+                if (examIndex < examQuestions.length - 1) { examIndex++;
+                    renderExam(); }
+            });
+
+            examTotalCount.textContent = total;
+            examAnsweredCount.textContent = answered;
+        }
+
+        function checkExamComplete() {
+            const total = examQuestions.length;
+            const answered = examQuestions.filter(q => q.answered).length;
+            if (answered === total && examRunning) {
+                // Auto-end exam when all answered
+                endExam();
+            }
+        }
+
+        function startExam() {
+            if (examRunning) return;
+            const count = parseInt(examQuestionSelect.value);
+            // Pick random questions
+            const shuffled = [...MCQ_DATA].sort(() => Math.random() - 0.5);
+            examQuestions = shuffled.slice(0, count).map(q => ({
+                ...q,
+                answered: false,
+                selected: null
+            }));
+            examIndex = 0;
+            examAnswered = 0;
+            examRunning = true;
+            examTime = 25 * 60;
+            examTimerDisplay.textContent = '25:00';
+
+            examQuestionCount.textContent = count;
+            examTotalCount.textContent = count;
+            examAnsweredCount.textContent = '0';
+            examResult.style.display = 'none';
+
+            startExamBtn.textContent = '⏳ In Progress';
+            startExamBtn.disabled = true;
+
+            renderExam();
+
+            if (examTimer) clearInterval(examTimer);
+            examTimer = setInterval(() => {
+                examTime--;
+                const mins = Math.floor(examTime / 60);
+                const secs = examTime % 60;
+                examTimerDisplay.textContent = `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
+                if (examTime <= 0) {
+                    endExam();
+                }
+            }, 1000);
+        }
+
+        function endExam() {
+            if (examTimer) { clearInterval(examTimer);
+                examTimer = null; }
+            examRunning = false;
+            startExamBtn.textContent = 'Start Exam';
+            startExamBtn.disabled = false;
+
+            const total = examQuestions.length;
+            const correct = examQuestions.filter(q => q.answered && q.selected === q.correct).length;
+            const answered = examQuestions.filter(q => q.answered).length;
+
+            let resultHtml = `
+                <h3 style="margin-bottom:0.5rem;">📊 Exam Results</h3>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:1rem;margin:1rem 0;">
+                    <div><strong>Total</strong><br><span style="font-size:1.6rem;font-weight:700;">${total}</span></div>
+                    <div><strong>Answered</strong><br><span style="font-size:1.6rem;font-weight:700;">${answered}</span></div>
+                    <div><strong>Correct</strong><br><span style="font-size:1.6rem;font-weight:700;color:#27ae60;">${correct}</span></div>
+                    <div><strong>Wrong</strong><br><span style="font-size:1.6rem;font-weight:700;color:#e74c3c;">${answered - correct}</span></div>
+                    <div><strong>Score</strong><br><span style="font-size:1.6rem;font-weight:700;color:var(--primary);">${total > 0 ? Math.round((correct/total)*100) : 0}%</span></div>
+                </div>
+                <button class="btn btn-primary" onclick="reviewExam()">📖 Review Answers</button>
+            `;
+            examResult.innerHTML = resultHtml;
+            examResult.style.display = 'block';
+
+            // Update stats
+            updateStats();
+        }
+
+        function reviewExam() {
+            // Show all questions with correct/incorrect markings
+            let html = '<h3 style="margin-bottom:1rem;">📖 Review All Questions</h3>';
+            examQuestions.forEach((q, idx) => {
+                const isCorrect = q.answered && q.selected === q.correct;
+                const icon = q.answered ? (isCorrect ? '✅' : '❌') : '⏳';
+                html += `
+                    <div style="padding:0.8rem 1rem;border-bottom:1px solid var(--border);">
+                        <div><strong>${idx+1}.</strong> ${q.question} <span style="color:${isCorrect ? '#27ae60' : q.answered ? '#e74c3c' : 'var(--text3)'};">${icon}</span></div>
+                        <div style="font-size:0.85rem;color:var(--text3);">Your answer: ${q.answered ? q.options[q.selected] : 'Not answered'} | Correct: ${q.options[q.correct]}</div>
+                    </div>
+                `;
+            });
+            html += `<button class="btn btn-outline" style="margin-top:1rem;" onclick="document.getElementById('examResult').innerHTML = ''; document.getElementById('examResult').style.display = 'none;">Close</button>`;
+            examResult.innerHTML = html;
+            examResult.style.display = 'block';
+        }
+
+        startExamBtn.addEventListener('click', startExam);
+        endExamBtn.addEventListener('click', endExam);
+        examResetBtn.addEventListener('click', () => {
+            if (examTimer) { clearInterval(examTimer);
+                examTimer = null; }
+            examRunning = false;
+            examQuestions = [];
+            examIndex = 0;
+            examAnswered = 0;
+            examTime = 25 * 60;
+            examTimerDisplay.textContent = '25:00';
+            startExamBtn.textContent = 'Start Exam';
+            startExamBtn.disabled = false;
+            examResult.style.display = 'none';
+            renderExam();
+        });
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // 12. INIT
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        // Load saved MCQ state
+        try {
+            const saved = localStorage.getItem('cse2111-mcq');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                if (Array.isArray(parsed) && parsed.length === MCQ_DATA.length) {
+                    parsed.forEach((p, idx) => {
+                        if (MCQ_DATA[idx]) {
+                            MCQ_DATA[idx].answered = p.answered || false;
+                            MCQ_DATA[idx].selected = p.selected !== undefined ? p.selected : null;
+                        }
+                    });
+                }
+            }
+        } catch (e) {}
+
+        // Render initial pages
+        navigateTo('home');
+        renderNotes();
+        renderCode();
+        renderMcq();
+        updateMcqProgress();
+        updateStats();
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // 13. KEYBOARD SHORTCUTS
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
+            if (currentPage === 'mcq') {
+                if (e.key === 'ArrowRight' || e.key === ' ') {
+                    e.preventDefault();
+                    if (currentMcqIndex < filteredMcqs.length - 1) { currentMcqIndex++;
+                        renderMcq(); }
+                }
+                if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    if (currentMcqIndex > 0) { currentMcqIndex--;
+                        renderMcq(); }
+                }
+                if (e.key >= '1' && e.key <= '4') {
+                    const idx = parseInt(e.key) - 1;
+                    const q = filteredMcqs[currentMcqIndex];
+                    if (q && !q.answered) {
+                        const radios = mcqContainer.querySelectorAll('input[type="radio"]');
+                        if (radios[idx]) radios[idx].click();
+                    }
+                }
+            }
+            if (currentPage === 'exam') {
+                if (e.key === 'ArrowRight' || e.key === ' ') {
+                    e.preventDefault();
+                    if (examIndex < examQuestions.length - 1) { examIndex++;
+                        renderExam(); }
+                }
+                if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    if (examIndex > 0) { examIndex--;
+                        renderExam(); }
+                }
+            }
+        });
+
+        console.log('🚀 CSE 2111 Study Hub loaded. 300 MCQs, notes, code, and exam prep ready!');
+    </script>
+
+</body>
+</html>
